@@ -3,4 +3,19 @@
   width: 500px;
   height: 100px;
   margin: 0 auto;
+
+  .card-container {
+    width: 600px;
+    height: 200px;
+    margin-bottom: 20px;
+  }
+
+  #card-container-1 {
+    background: blue;
+  }
+
+  #card-container-2 {
+    background: red;
+  }
+
 }
