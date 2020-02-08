@@ -1,57 +1,44 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import './Board.scss';
+import {useDrop} from 'react-dnd';
+import ItemTypes from '../ItemTypes';
 import Card from './Card';
-import Draggable from 'react-draggable';
+import CardI from '../interfaces/Card';
 
-function Board() {
+interface BoardProps {
+    cards: any[],
+}
 
-    const [count, setCount] = useState(0);
-    const [cardPosition, setCardPosition] = useState('relative');
-    const [fruit] = useState('banana');
+const Board: React.FC<BoardProps> = ({cards}) => {
 
-    useEffect(() => {
-        console.log('hey');
-        //incCount();
-        document.title = `You clicked ${count} times`;
-    }, [count]);
+    const [{canDrop, isOver}, drop] = useDrop({
+        accept: ItemTypes.CARD,
+        drop: () => ({name: 'Board'}),
+        collect: monitor => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+        }),
+    });
 
-    function incCount() {
-        setCount(42);
-    }
+    const isActive = canDrop && isOver;
+    let backgroundColor = 'red';
+    if (isActive) backgroundColor = 'darkgreen';
+    else if (canDrop) backgroundColor = 'darkkhaki';
+    let backgroundColorStyle: React.CSSProperties = {backgroundColor: backgroundColor};
 
-    function onCardDragStop(e: any, position: any) {
-        const {x, y} = position;
-        console.log(x);
-        console.log(y);
-    }
+    const moveCard = (card: CardI) => {
+        console.log('can\'t be movet from here');
+    };
 
-    // @ts-ignore
     return (
         <div className="board">
-            <Draggable>
-                <div>This readme is really dragging on...</div>
-            </Draggable>
-            <p>You clicked {count} times</p>
-            <button onClick={() => setCount(count + 1)}>
-                Click me
-            </button>
-            <p>I like to eat {fruit}</p>
-            <div className="card-container" id="card-container-1">
-                <Draggable onStop={onCardDragStop}>
-                    <div style={{position: 'relative'}}>
-                        <Card/>
-                    </div>
-                </Draggable>
-            </div>
-            <div className="card-container" id="card-container-2">
-                <Draggable>
-                    <div>
-                        <Card/>
-                    </div>
-                </Draggable>
+            <div className="card-container" ref={drop} style={backgroundColorStyle}>
+                {cards.map((card, i) => {
+                    return <Card card={card} moveCard={moveCard} key={i}/>;
+                })}
             </div>
         </div>
     );
-}
+};
 
 export default Board;

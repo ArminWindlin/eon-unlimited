@@ -1,11 +1,11 @@
 import React from 'react';
-import Board from './components/Board';
+import PlayGround from './components/PlayGround';
 import './App.scss';
 
 function App() {
   return (
     <div className="app">
-        <Board/>
+        <PlayGround/>
     </div>
   );
 }
