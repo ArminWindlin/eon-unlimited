@@ -4,28 +4,31 @@ import Card from './Card';
 import Board from './Board';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
-import CardI from '../interfaces/Card';
+import CardType from '../interfaces/CardType';
 
 const PlayGround: React.FC = () => {
 
-    const [count, setCount] = useState(0);
-    const [cardPosition, setCardPosition] = useState('relative');
-    const [fruit] = useState('banana');
-    const [handCards, setHandCards] = useState<CardI[]>([
-        {title: 'Dragon'}, {title: 'Dino'}, {title: 'Dungo'}]);
-    const [boardCards, setBoardCards] = useState<CardI[]>([]);
+    const [handCards, setHandCards] = useState<CardType[]>([
+        {id: 0, title: 'Dragon'}, {id: 1, title: 'Dino'}, {id: 2, title: 'Dungo'}]);
+    const [boardCards, setBoardCards] = useState<CardType[]>([]);
 
+    // TODO: Testing, remove later
+    const [count, setCount] = useState(0);
+    const [fruit] = useState('banana');
+
+    // TODO: Testing, remove later
     useEffect(() => {
         console.log('hey');
         //incCount();
         document.title = `You clicked ${count} times`;
     }, [count]);
 
+    // TODO: Testing, remove later
     function incCount() {
         setCount(42);
     }
 
-    const moveCard = (card: CardI) => {
+    const moveCard = (card: CardType) => {
         handCards.splice(handCards.findIndex(c => c.title === card.title), 1);
         setHandCards(handCards);
         setBoardCards([...boardCards, card]);

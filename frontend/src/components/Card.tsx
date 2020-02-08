@@ -2,11 +2,11 @@ import React from 'react';
 import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
 import ItemTypes from '../ItemTypes';
-import CardI from '../interfaces/Card';
+import CardType from '../interfaces/CardType';
 
 interface CardProps {
-    card: CardI,
-    moveCard: (card: CardI) => void
+    card: CardType,
+    moveCard: (cardID: CardType) => void
 }
 
 const Card: React.FC<CardProps> = ({card, moveCard}) => {

@@ -3,10 +3,10 @@ import './Board.scss';
 import {useDrop} from 'react-dnd';
 import ItemTypes from '../ItemTypes';
 import Card from './Card';
-import CardI from '../interfaces/Card';
+import CardType from '../interfaces/CardType';
 
 interface BoardProps {
-    cards: any[],
+    cards: CardType[],
 }
 
 const Board: React.FC<BoardProps> = ({cards}) => {
@@ -21,12 +21,12 @@ const Board: React.FC<BoardProps> = ({cards}) => {
     });
 
     const isActive = canDrop && isOver;
-    let backgroundColor = 'red';
-    if (isActive) backgroundColor = 'darkgreen';
+    let backgroundColor = 'green';
+    if (isActive) backgroundColor = 'lightgreen';
     else if (canDrop) backgroundColor = 'darkkhaki';
     let backgroundColorStyle: React.CSSProperties = {backgroundColor: backgroundColor};
 
-    const moveCard = (card: CardI) => {
+    const moveCard = (cardID: CardType) => {
         console.log('can\'t be movet from here');
     };
 
