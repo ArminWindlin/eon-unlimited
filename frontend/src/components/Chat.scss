@@ -1,0 +1,15 @@
+.chat {
+  position: fixed;
+  background: lightblue;
+  left: 0;
+  bottom: 0;
+
+  &-container {
+    max-height: 200px;
+    overflow: auto;
+  }
+
+  &-form {
+  }
+
+}

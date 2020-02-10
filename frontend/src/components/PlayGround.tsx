@@ -19,14 +19,8 @@ const PlayGround: React.FC = () => {
     // TODO: Testing, remove later
     useEffect(() => {
         console.log('hey');
-        //incCount();
         document.title = `You clicked ${count} times`;
     }, [count]);
-
-    // TODO: Testing, remove later
-    function incCount() {
-        setCount(42);
-    }
 
     const moveCard = (card: CardType) => {
         handCards.splice(handCards.findIndex(c => c.title === card.title), 1);
@@ -36,7 +30,7 @@ const PlayGround: React.FC = () => {
     };
 
     return (
-        <div className="play-ground">
+        <div className="playground">
             <DndProvider backend={Backend}>
                 <p>You clicked {count} times</p>
                 <button onClick={() => setCount(count + 1)}>
@@ -44,7 +38,7 @@ const PlayGround: React.FC = () => {
                 </button>
                 <p>I like to eat {fruit}</p>
                 <Board cards={boardCards}/>
-                <div className="card-container" id="card-container-1">
+                <div className="playground-card-container" id="playground-card-container-1">
                     {handCards.map((card, i) => {
                         return <Card card={card} moveCard={moveCard} key={i}/>;
                     })}

@@ -32,7 +32,7 @@ const Board: React.FC<BoardProps> = ({cards}) => {
 
     return (
         <div className="board">
-            <div className="card-container" ref={drop} style={backgroundColorStyle}>
+            <div className="board-card-container" ref={drop} style={backgroundColorStyle}>
                 {cards.map((card, i) => {
                     return <Card card={card} moveCard={moveCard} key={i}/>;
                 })}
