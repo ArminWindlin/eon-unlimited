@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import './PlayGround.scss';
-import Card from './Card';
-import Board from './Board';
+import Board from '../Board/Board';
+import Hand from '../Hand/Hand';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
-import CardType from '../interfaces/CardType';
+import CardType from '../../interfaces/CardType';
 
 const PlayGround: React.FC = () => {
 
@@ -14,11 +14,9 @@ const PlayGround: React.FC = () => {
 
     // TODO: Testing, remove later
     const [count, setCount] = useState(0);
-    const [fruit] = useState('banana');
 
     // TODO: Testing, remove later
     useEffect(() => {
-        console.log('hey');
         document.title = `You clicked ${count} times`;
     }, [count]);
 
@@ -36,13 +34,8 @@ const PlayGround: React.FC = () => {
                 <button onClick={() => setCount(count + 1)}>
                     Click me
                 </button>
-                <p>I like to eat {fruit}</p>
                 <Board cards={boardCards}/>
-                <div className="playground-card-container" id="playground-card-container-1">
-                    {handCards.map((card, i) => {
-                        return <Card card={card} moveCard={moveCard} key={i}/>;
-                    })}
-                </div>
+                <Hand cards={handCards} moveCard={moveCard}/>
             </DndProvider>
         </div>
     );

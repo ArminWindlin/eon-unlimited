@@ -1,9 +1,9 @@
 import React from 'react';
 import './Board.scss';
 import {useDrop} from 'react-dnd';
-import ItemTypes from '../ItemTypes';
-import Card from './Card';
-import CardType from '../interfaces/CardType';
+import ItemTypes from '../../interfaces/ItemTypes';
+import Card from '../Card/Card';
+import CardType from '../../interfaces/CardType';
 
 interface BoardProps {
     cards: CardType[],

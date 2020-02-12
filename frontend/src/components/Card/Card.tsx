@@ -1,8 +1,8 @@
 import React from 'react';
 import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
-import ItemTypes from '../ItemTypes';
-import CardType from '../interfaces/CardType';
+import ItemTypes from '../../interfaces/ItemTypes';
+import CardType from '../../interfaces/CardType';
 
 interface CardProps {
     card: CardType,
