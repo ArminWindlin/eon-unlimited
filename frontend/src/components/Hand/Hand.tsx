@@ -12,8 +12,7 @@ const Hand: React.FC<BoardProps> = ({cards, moveCard}) => {
 
     return (
         <div className="hand">
-
-            <div className="hand-card-container">
+            <div className="hand-card-container flex jc-c ai-c">
                 {cards.map((card, i) => {
                     return <Card card={card} moveCard={moveCard} key={i}/>;
                 })}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import './PlayGround.scss';
 import Board from '../Board/Board';
 import Hand from '../Hand/Hand';
@@ -12,14 +12,6 @@ const PlayGround: React.FC = () => {
         {id: 0, title: 'Dragon'}, {id: 1, title: 'Dino'}, {id: 2, title: 'Dungo'}]);
     const [boardCards, setBoardCards] = useState<CardType[]>([]);
 
-    // TODO: Testing, remove later
-    const [count, setCount] = useState(0);
-
-    // TODO: Testing, remove later
-    useEffect(() => {
-        document.title = `You clicked ${count} times`;
-    }, [count]);
-
     const moveCard = (card: CardType) => {
         handCards.splice(handCards.findIndex(c => c.title === card.title), 1);
         setHandCards(handCards);
@@ -30,10 +22,6 @@ const PlayGround: React.FC = () => {
     return (
         <div className="playground">
             <DndProvider backend={Backend}>
-                <p>You clicked {count} times</p>
-                <button onClick={() => setCount(count + 1)}>
-                    Click me
-                </button>
                 <Board cards={boardCards}/>
                 <Hand cards={handCards} moveCard={moveCard}/>
             </DndProvider>
