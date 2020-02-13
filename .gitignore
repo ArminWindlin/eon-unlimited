@@ -1,6 +1,10 @@
 # ide
 .idea
+frontend/.idea
+backend/.idea
 eon-unlimited.iml
+frontend/frontend.iml
+backend/backend.iml
 
 
 ## FRONTEND ##
