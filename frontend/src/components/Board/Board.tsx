@@ -34,7 +34,7 @@ const Board: React.FC<BoardProps> = ({cards}) => {
         <div className="board">
             <div className="board-card-container flex jc-c ai-c" ref={drop} style={backgroundColorStyle}>
                 {cards.map((card, i) => {
-                    return <Card card={card} moveCard={moveCard} key={i}/>;
+                    return <Card card={card} moveCard={moveCard} draggable={false} key={i}/>;
                 })}
             </div>
         </div>

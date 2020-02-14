@@ -6,10 +6,11 @@ import CardType from '../../interfaces/CardType';
 
 interface CardProps {
     card: CardType,
-    moveCard: (cardID: CardType) => void
+    moveCard: (cardID: CardType) => void,
+    draggable: boolean
 }
 
-const Card: React.FC<CardProps> = ({card, moveCard}) => {
+const Card: React.FC<CardProps> = ({card, moveCard, draggable = true}) => {
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.title, type: ItemTypes.CARD},
@@ -25,11 +26,14 @@ const Card: React.FC<CardProps> = ({card, moveCard}) => {
         }),
     });
 
+    // enable or disable drag
+    const dragRef = draggable ? drag : null;
+
     const opacity = isDragging ? 0.4 : 1;
     let opacityStyle: React.CSSProperties = {opacity: opacity};
 
     return (
-        <div className="card" ref={drag} style={opacityStyle}>
+        <div className="card" ref={dragRef} style={opacityStyle}>
             {card.title}
         </div>
     );
