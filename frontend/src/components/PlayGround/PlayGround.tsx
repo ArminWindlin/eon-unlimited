@@ -3,10 +3,11 @@ import './PlayGround.scss';
 import Board from '../Board/Board';
 import EnemyBoard from '../EnemyBoard/EnemyBoard';
 import Hand from '../Hand/Hand';
+import Deck from '../Deck/Deck';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import CardType from '../../interfaces/CardType';
-import {getRandomCards} from '../../utility/cardFunctions'
+import {getRandomCard, getRandomCards} from '../../utility/cardFunctions';
 
 const PlayGround: React.FC = () => {
 
@@ -21,12 +22,17 @@ const PlayGround: React.FC = () => {
         console.log('cool');
     };
 
+    const drawCard = () => {
+        setHandCards([...handCards, getRandomCard()]);
+    };
+
     return (
         <div className="playground">
             <DndProvider backend={Backend}>
                 <EnemyBoard cards={enemyBoardCards}/>
                 <Board cards={boardCards}/>
                 <Hand cards={handCards} moveCard={moveCard}/>
+                <Deck drawCard={drawCard}/>
             </DndProvider>
         </div>
     );
