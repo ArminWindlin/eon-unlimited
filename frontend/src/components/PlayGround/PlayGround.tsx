@@ -6,14 +6,13 @@ import Hand from '../Hand/Hand';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import CardType from '../../interfaces/CardType';
+import {getRandomCards} from '../../utility/cardFunctions'
 
 const PlayGround: React.FC = () => {
 
-    const [handCards, setHandCards] = useState<CardType[]>([
-        {id: 0, title: 'Dragon'}, {id: 1, title: 'Dino'}, {id: 2, title: 'Dungo'}]);
+    const [handCards, setHandCards] = useState<CardType[]>(getRandomCards(3));
     const [boardCards, setBoardCards] = useState<CardType[]>([]);
-    const [enemyBoardCards, setEnemyBoardCards] = useState<CardType[]>([
-        {id: 0, title: 'Dragon'}, {id: 1, title: 'Dino'}, {id: 2, title: 'Dungo'}]);
+    const [enemyBoardCards, setEnemyBoardCards] = useState<CardType[]>(getRandomCards(3));
 
     const moveCard = (card: CardType) => {
         handCards.splice(handCards.findIndex(c => c.title === card.title), 1);

@@ -1,8 +1,21 @@
 .card {
-  background: rgba(153, 35, 17, 0.6);
+  position: relative;
+  background: rgba(200, 70, 50, 0.8);
   width: 120px;
   height: 160px;
   margin: 10px;
   border-radius: 5px;
   text-align: center;
+
+  &-title {
+    margin-top: 5px;
+  }
+
+  &-health {
+    position: absolute;
+    right: 10px;
+    font-weight: bold;
+    bottom: 10px
+  }
+
 }

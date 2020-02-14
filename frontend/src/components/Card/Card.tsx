@@ -34,7 +34,8 @@ const Card: React.FC<CardProps> = ({card, moveCard, draggable = true}) => {
 
     return (
         <div className="card" ref={dragRef} style={opacityStyle}>
-            {card.title}
+            <div className="card-title">{card.title}</div>
+            <div className="card-health">{card.health}</div>
         </div>
     );
 };
