@@ -24,7 +24,7 @@ export const getRandomCard: () => CardType = () => {
         'Giant Tree'
     ];
     return {
-        id: Math.floor(Math.random() * 1000),
+        id: Math.floor(Math.random() * 10000),
         title: names[Math.floor(Math.random() * names.length)],
         offense: Math.floor(Math.random() * 20),
         defense: Math.floor(Math.random() * 20),

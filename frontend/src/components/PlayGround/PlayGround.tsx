@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import './PlayGround.scss';
 import Board from '../Board/Board';
 import EnemyBoard from '../EnemyBoard/EnemyBoard';
@@ -14,14 +14,30 @@ const PlayGround: React.FC = () => {
 
     const [handCards, setHandCards] = useState<CardType[]>(getRandomCards(3));
     const [boardCards, setBoardCards] = useState<CardType[]>([]);
-    const [enemyBoardCards, setEnemyBoardCards] = useState<CardType[]>(getRandomCards(3));
+    const [enemyBoardCards, setEnemyBoardCards] = useState<CardType[]>(getRandomCards(4));
     const [hint, setHint] = useState('');
+
+    let cardSelected = false;
+    let selectedCard: CardType;
+    let selectedEnemyCard: CardType;
+
+    // to manipulate selected state of cards
+    let markCard: Dispatch<SetStateAction<boolean>>;
 
     const moveCard = (card: CardType) => {
         if (boardCards.length > 3) return showHint('Board is full.');
-        handCards.splice(handCards.findIndex(c => c.title === card.title), 1);
-        setHandCards(handCards);
+        removeCard(card, handCards, 'hand');
         setBoardCards([...boardCards, card]);
+    };
+
+    const removeCard = (card: CardType, container: CardType[], location: string) => {
+        // TODO: make sure remove criteria is unique (atm cards can have same id)
+        let index = container.findIndex(c => c.id === card.id);
+        if (index === -1) return;
+        container.splice(index, 1);
+        if (location === 'hand') setHandCards([...container]);
+        if (location === 'board') setBoardCards([...container]);
+        if (location === 'enemyBoard') setEnemyBoardCards([...container]);
     };
 
     const drawCard = () => {
@@ -34,11 +50,32 @@ const PlayGround: React.FC = () => {
         setTimeout(() => setHint(''), 1500);
     };
 
+    const selectCard = (card: CardType, setCardMarker: Dispatch<SetStateAction<boolean>>) => {
+        if (markCard) markCard(false);
+        selectedCard = card;
+        markCard = setCardMarker;
+        cardSelected = true;
+        return true;
+    };
+
+    const selectEnemyCard = (card: CardType, markCard: Dispatch<SetStateAction<boolean>>) => {
+        if (!cardSelected) return false;
+        selectedEnemyCard = card;
+        attackCard();
+        return false;
+    };
+
+    const attackCard = () => {
+        cardSelected = false;
+        removeCard(selectedCard, boardCards, 'board');
+        removeCard(selectedEnemyCard, enemyBoardCards, 'enemyBoard');
+    };
+
     return (
         <div className="playground">
             <DndProvider backend={Backend}>
-                <EnemyBoard cards={enemyBoardCards}/>
-                <Board cards={boardCards}/>
+                <EnemyBoard cards={enemyBoardCards} selectCard={selectEnemyCard}/>
+                <Board cards={boardCards} selectCard={selectCard}/>
                 <Hand cards={handCards} moveCard={moveCard}/>
                 <Deck drawCard={drawCard}/>
                 <Hint hint={hint}/>

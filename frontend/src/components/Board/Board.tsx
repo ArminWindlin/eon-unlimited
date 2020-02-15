@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 import './Board.scss';
 import {useDrop} from 'react-dnd';
 import ItemTypes from '../../interfaces/ItemTypes';
@@ -7,9 +7,10 @@ import CardType from '../../interfaces/CardType';
 
 interface BoardProps {
     cards: CardType[],
+    selectCard: (card: CardType, setSelected: Dispatch<SetStateAction<boolean>>) => boolean
 }
 
-const Board: React.FC<BoardProps> = ({cards}) => {
+const Board: React.FC<BoardProps> = ({cards, selectCard}) => {
 
     const [{canDrop, isOver}, drop] = useDrop({
         accept: ItemTypes.CARD,
@@ -26,7 +27,7 @@ const Board: React.FC<BoardProps> = ({cards}) => {
     else if (canDrop) backgroundColor = 'rgba(172, 166, 115, 0.4)';
     let backgroundColorStyle: React.CSSProperties = {backgroundColor: backgroundColor};
 
-    const moveCard = (cardID: CardType) => {
+    const moveCard = (card: CardType) => {
         console.log('can\'t be movet from here');
     };
 
@@ -34,7 +35,7 @@ const Board: React.FC<BoardProps> = ({cards}) => {
         <div className="board">
             <div className="board-card-container flex jc-c ai-c" ref={drop} style={backgroundColorStyle}>
                 {cards.map((card, i) => {
-                    return <Card card={card} moveCard={moveCard} draggable={false} key={i}/>;
+                    return <Card card={card} moveCard={moveCard} selectCard={selectCard} draggable={false} key={i}/>;
                 })}
             </div>
         </div>

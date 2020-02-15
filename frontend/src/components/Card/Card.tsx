@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
 import ItemTypes from '../../interfaces/ItemTypes';
@@ -6,11 +6,14 @@ import CardType from '../../interfaces/CardType';
 
 interface CardProps {
     card: CardType,
-    moveCard: (cardID: CardType) => void,
-    draggable: boolean
+    draggable: boolean,
+    moveCard: (card: CardType) => void,
+    selectCard: (card: CardType, setSelected: Dispatch<SetStateAction<boolean>>) => boolean
 }
 
-const Card: React.FC<CardProps> = ({card, moveCard, draggable = true}) => {
+const Card: React.FC<CardProps> = ({card, moveCard, selectCard, draggable = true}) => {
+
+    const [selected, setSelected] = useState(false);
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.title, type: ItemTypes.CARD},
@@ -32,8 +35,13 @@ const Card: React.FC<CardProps> = ({card, moveCard, draggable = true}) => {
     const opacity = isDragging ? 0.4 : 1;
     let opacityStyle: React.CSSProperties = {opacity: opacity};
 
+    const trySelect = () => {
+        if (selectCard(card, setSelected)) setSelected(true);
+    };
+
     return (
-        <div className="card" ref={dragRef} style={opacityStyle}>
+        <div className={'card' + (selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
+             onClick={trySelect}>
             <div className="card-title">{card.title}</div>
             <div className="card-health">{card.health}</div>
         </div>
