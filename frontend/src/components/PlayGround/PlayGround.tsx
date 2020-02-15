@@ -25,6 +25,7 @@ const PlayGround: React.FC = () => {
     let markCard: Dispatch<SetStateAction<boolean>>;
 
     const moveCard = (card: CardType) => {
+        deselectCards();
         if (boardCards.length > 3) return showHint('Board is full.');
         removeCard(card, handCards, 'hand');
         setBoardCards([...boardCards, card]);
@@ -41,6 +42,7 @@ const PlayGround: React.FC = () => {
     };
 
     const drawCard = () => {
+        deselectCards();
         if (handCards.length > 3) return showHint('Hand is full.');
         setHandCards([...handCards, getRandomCard()]);
     };
@@ -51,7 +53,7 @@ const PlayGround: React.FC = () => {
     };
 
     const selectCard = (card: CardType, setCardMarker: Dispatch<SetStateAction<boolean>>) => {
-        if (markCard) markCard(false);
+        deselectCards();
         selectedCard = card;
         markCard = setCardMarker;
         cardSelected = true;
@@ -65,10 +67,15 @@ const PlayGround: React.FC = () => {
         return false;
     };
 
-    const attackCard = () => {
+    const deselectCards = () => {
+        if (markCard) markCard(false);
         cardSelected = false;
+    };
+
+    const attackCard = () => {
         removeCard(selectedCard, boardCards, 'board');
         removeCard(selectedEnemyCard, enemyBoardCards, 'enemyBoard');
+        deselectCards();
     };
 
     return (
