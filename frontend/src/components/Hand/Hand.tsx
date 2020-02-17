@@ -1,16 +1,16 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React from 'react';
 import './Hand.scss';
 import Card from '../Card/Card';
 import CardType from '../../interfaces/CardType';
 
 interface BoardProps {
     cards: CardType[],
-    moveCard: (card: CardType) => void
+    moveCard: (cardIndex: number) => void
 }
 
 const Hand: React.FC<BoardProps> = ({cards, moveCard}) => {
 
-    const selectCard = (card: CardType, setSelected: Dispatch<SetStateAction<boolean>>) => {
+    const selectCard = (cardIndex: number) => {
         return false;
     };
 

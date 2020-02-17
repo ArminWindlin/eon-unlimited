@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction, useState} from 'react';
+import React, {useState} from 'react';
 import './PlayGround.scss';
 import Board from '../Board/Board';
 import EnemyBoard from '../EnemyBoard/EnemyBoard';
@@ -10,6 +10,10 @@ import Backend from 'react-dnd-html5-backend';
 import CardType from '../../interfaces/CardType';
 import {getRandomCard, getRandomCards} from '../../utility/cardFunctions';
 
+let cardSelected = false;
+let selectedCardIndex = -1;
+let selectedEnemyCardIndex = -1;
+
 const PlayGround: React.FC = () => {
 
     const [handCards, setHandCards] = useState<CardType[]>(getRandomCards(3));
@@ -17,25 +21,17 @@ const PlayGround: React.FC = () => {
     const [enemyBoardCards, setEnemyBoardCards] = useState<CardType[]>(getRandomCards(4));
     const [hint, setHint] = useState('');
 
-    let cardSelected = false;
-    let selectedCard: CardType;
-    let selectedEnemyCard: CardType;
-
-    // to manipulate selected state of cards
-    let markCard: Dispatch<SetStateAction<boolean>>;
-
-    const moveCard = (card: CardType) => {
+    const moveCard = (cardIndex: number) => {
         deselectCards();
         if (boardCards.length > 3) return showHint('Board is full.');
-        removeCard(card, handCards, 'hand');
-        setBoardCards([...boardCards, card]);
+        handCards[cardIndex].index = boardCards.length;
+        setBoardCards([...boardCards, handCards[cardIndex]]);
+        removeCard(cardIndex, handCards, 'hand');
     };
 
-    const removeCard = (card: CardType, container: CardType[], location: string) => {
-        // TODO: make sure remove criteria is unique (atm cards can have same id)
-        let index = container.findIndex(c => c.id === card.id);
-        if (index === -1) return;
-        container.splice(index, 1);
+    const removeCard = (cardIndex: number, container: CardType[], location: string) => {
+        container.splice(cardIndex, 1);
+        container.forEach((c, i) => {c.index = i;});
         if (location === 'hand') setHandCards([...container]);
         if (location === 'board') setBoardCards([...container]);
         if (location === 'enemyBoard') setEnemyBoardCards([...container]);
@@ -44,7 +40,7 @@ const PlayGround: React.FC = () => {
     const drawCard = () => {
         deselectCards();
         if (handCards.length > 3) return showHint('Hand is full.');
-        setHandCards([...handCards, getRandomCard()]);
+        setHandCards([...handCards, getRandomCard(handCards.length)]);
     };
 
     const showHint = (text: string) => {
@@ -52,29 +48,31 @@ const PlayGround: React.FC = () => {
         setTimeout(() => setHint(''), 1500);
     };
 
-    const selectCard = (card: CardType, setCardMarker: Dispatch<SetStateAction<boolean>>) => {
+    const selectCard = (cardIndex: number) => {
         deselectCards();
-        selectedCard = card;
-        markCard = setCardMarker;
+        boardCards[cardIndex].selected = true;
+        selectedCardIndex = cardIndex;
+        setBoardCards([...boardCards]);
         cardSelected = true;
-        return true;
     };
 
-    const selectEnemyCard = (card: CardType, markCard: Dispatch<SetStateAction<boolean>>) => {
+    const selectEnemyCard = (cardIndex: number) => {
         if (!cardSelected) return false;
-        selectedEnemyCard = card;
+        selectedEnemyCardIndex = cardIndex;
         attackCard();
-        return false;
     };
 
     const deselectCards = () => {
-        if (markCard) markCard(false);
-        cardSelected = false;
+        if (selectedCardIndex !== -1 && boardCards[selectedCardIndex]) {
+            boardCards[selectedCardIndex].selected = false;
+            setBoardCards([...boardCards]);
+            cardSelected = false;
+        }
     };
 
     const attackCard = () => {
-        removeCard(selectedCard, boardCards, 'board');
-        removeCard(selectedEnemyCard, enemyBoardCards, 'enemyBoard');
+        removeCard(selectedCardIndex, boardCards, 'board');
+        removeCard(selectedEnemyCardIndex, enemyBoardCards, 'enemyBoard');
         deselectCards();
     };
 

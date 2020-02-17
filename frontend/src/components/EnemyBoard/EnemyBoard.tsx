@@ -1,16 +1,16 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React from 'react';
 import './EnemyBoard.scss';
 import Card from '../Card/Card';
 import CardType from '../../interfaces/CardType';
 
 interface BoardProps {
     cards: CardType[],
-    selectCard: (card: CardType, setSelected: Dispatch<SetStateAction<boolean>>) => boolean
+    selectCard: (cardIndex: number) => void
 }
 
 const EnemyBoard: React.FC<BoardProps> = ({cards, selectCard}) => {
 
-    const moveCard = (card: CardType) => {
+    const moveCard = (cardIndex: number) => {
     };
 
     return (

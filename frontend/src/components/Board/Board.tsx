@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React from 'react';
 import './Board.scss';
 import {useDrop} from 'react-dnd';
 import ItemTypes from '../../interfaces/ItemTypes';
@@ -7,7 +7,7 @@ import CardType from '../../interfaces/CardType';
 
 interface BoardProps {
     cards: CardType[],
-    selectCard: (card: CardType, setSelected: Dispatch<SetStateAction<boolean>>) => boolean
+    selectCard: (cardIndex: number) => void
 }
 
 const Board: React.FC<BoardProps> = ({cards, selectCard}) => {
@@ -27,7 +27,7 @@ const Board: React.FC<BoardProps> = ({cards, selectCard}) => {
     else if (canDrop) backgroundColor = 'rgba(172, 166, 115, 0.4)';
     let backgroundColorStyle: React.CSSProperties = {backgroundColor: backgroundColor};
 
-    const moveCard = (card: CardType) => {
+    const moveCard = (cardIndex: number) => {
         console.log('can\'t be movet from here');
     };
 

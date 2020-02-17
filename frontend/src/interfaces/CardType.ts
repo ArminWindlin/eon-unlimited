@@ -4,5 +4,7 @@ export default interface CardType {
     offense: number,
     defense: number,
     health: number,
-    mana: number
+    mana: number,
+    selected: boolean,
+    index: number
 }
