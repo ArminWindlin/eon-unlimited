@@ -3,15 +3,15 @@ import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
 import ItemTypes from '../../interfaces/ItemTypes';
 import CardType from '../../interfaces/CardType';
+import {socket} from '../../utility/socket';
 
 interface CardProps {
     card: CardType,
     draggable: boolean,
-    moveCard: (cardIndex: number) => void,
     selectCard: (cardIndex: number) => void
 }
 
-const Card: React.FC<CardProps> = ({card, moveCard, selectCard, draggable = true}) => {
+const Card: React.FC<CardProps> = ({card, selectCard, draggable = true}) => {
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.title, type: ItemTypes.CARD},
@@ -19,7 +19,7 @@ const Card: React.FC<CardProps> = ({card, moveCard, selectCard, draggable = true
             const dropResult = monitor.getDropResult();
             if (item && dropResult) {
                 console.log(`You dropped ${item.name} into ${dropResult.name}!`);
-                moveCard(card.index);
+                socket.emit('ACTION_PLAY', card.index);
             }
         },
         collect: monitor => ({

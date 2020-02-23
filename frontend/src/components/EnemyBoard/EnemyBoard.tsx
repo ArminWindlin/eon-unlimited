@@ -10,14 +10,11 @@ interface BoardProps {
 
 const EnemyBoard: React.FC<BoardProps> = ({cards, selectCard}) => {
 
-    const moveCard = (cardIndex: number) => {
-    };
-
     return (
         <div className="enemy-board">
             <div className="enemy-board-card-container flex jc-c ai-c">
                 {cards.map((card, i) => {
-                    return <Card card={card} moveCard={moveCard} selectCard={selectCard} draggable={false} key={i}/>;
+                    return <Card card={card} selectCard={selectCard} draggable={false} key={i}/>;
                 })}
             </div>
         </div>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './PlayGround.scss';
 import Board from '../Board/Board';
 import EnemyBoard from '../EnemyBoard/EnemyBoard';
@@ -8,7 +8,8 @@ import Hint from '../Hint/Hint';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import CardType from '../../interfaces/CardType';
-import {getRandomCard, getRandomCards} from '../../utility/cardFunctions';
+import {getRandomCards} from '../../utility/cardFunctions';
+import {socket} from '../../utility/socket';
 
 let cardSelected = false;
 let selectedCardIndex = -1;
@@ -16,36 +17,27 @@ let selectedEnemyCardIndex = -1;
 
 const PlayGround: React.FC = () => {
 
-    const [handCards, setHandCards] = useState<CardType[]>(getRandomCards(3));
     const [boardCards, setBoardCards] = useState<CardType[]>([]);
     const [enemyBoardCards, setEnemyBoardCards] = useState<CardType[]>(getRandomCards(4));
-    const [hint, setHint] = useState('');
 
-    const moveCard = (cardIndex: number) => {
-        deselectCards();
-        if (boardCards.length > 3) return showHint('Board is full.');
-        handCards[cardIndex].index = boardCards.length;
-        setBoardCards([...boardCards, handCards[cardIndex]]);
-        removeCard(cardIndex, handCards, 'hand');
+    useEffect(() => {
+        socketSetup();
+    }, []);
+
+    const socketSetup = () => {
+        socket.emit('MATCH_SEARCH');
+        socket.on('MATCH_FOUND', (data: string) => {
+            console.log(data);
+        });
     };
 
     const removeCard = (cardIndex: number, container: CardType[], location: string) => {
         container.splice(cardIndex, 1);
-        container.forEach((c, i) => {c.index = i;});
-        if (location === 'hand') setHandCards([...container]);
+        container.forEach((c, i) => {
+            c.index = i;
+        });
         if (location === 'board') setBoardCards([...container]);
         if (location === 'enemyBoard') setEnemyBoardCards([...container]);
-    };
-
-    const drawCard = () => {
-        deselectCards();
-        if (handCards.length > 3) return showHint('Hand is full.');
-        setHandCards([...handCards, getRandomCard(handCards.length)]);
-    };
-
-    const showHint = (text: string) => {
-        setHint(text);
-        setTimeout(() => setHint(''), 1500);
     };
 
     const selectCard = (cardIndex: number) => {
@@ -77,15 +69,15 @@ const PlayGround: React.FC = () => {
     };
 
     return (
-        <div className="playground">
-            <DndProvider backend={Backend}>
-                <EnemyBoard cards={enemyBoardCards} selectCard={selectEnemyCard}/>
-                <Board cards={boardCards} selectCard={selectCard}/>
-                <Hand cards={handCards} moveCard={moveCard}/>
-                <Deck drawCard={drawCard}/>
-                <Hint hint={hint}/>
-            </DndProvider>
-        </div>
+            <div className="playground">
+                <DndProvider backend={Backend}>
+                    <EnemyBoard cards={enemyBoardCards} selectCard={selectEnemyCard}/>
+                    <Board selectCard={selectCard}/>
+                    <Hand/>
+                    <Deck/>
+                    <Hint/>
+                </DndProvider>
+            </div>
     );
 };
 
