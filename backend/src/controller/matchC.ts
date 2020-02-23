@@ -1,7 +1,8 @@
 import {getRandomCard} from '../util/cardFunctions';
 import {io} from '../socket';
+import Match from '../interfaces/match';
 
-const runningMatches = [];
+const runningMatches: Match[] = [];
 let currentMatchId = -1;
 let playerWaiting = false;
 
