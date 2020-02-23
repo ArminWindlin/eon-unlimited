@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import io from 'socket.io-client';
+import {socket} from '../../utility/socket';
 import './Chat.scss';
-
-const socket = io('http://localhost:3000');
 
 const Chat: React.FC = () => {
 

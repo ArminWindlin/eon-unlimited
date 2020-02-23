@@ -13,7 +13,9 @@ const Hint: React.FC = () => {
         });
     }, []);
 
-    return (<div className="hint">{hint}</div>);
+    return (
+            <div className="hint">{hint}</div>
+    );
 };
 
 export default Hint;

@@ -15,13 +15,13 @@ const EnemyBoard: React.FC = () => {
     }, []);
 
     return (
-        <div className="enemy-board">
-            <div className="enemy-board-card-container flex jc-c ai-c">
-                {cards.map((card, i) => {
-                    return <Card card={card} draggable={false} key={i}/>;
-                })}
+            <div className="enemy-board">
+                <div className="enemy-board-card-container flex jc-c ai-c">
+                    {cards.map((card, i) => {
+                        return <Card card={card} draggable={false} key={i}/>;
+                    })}
+                </div>
             </div>
-        </div>
     );
 };
 

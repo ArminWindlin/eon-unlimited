@@ -16,6 +16,7 @@ const Board: React.FC = () => {
             canDrop: monitor.canDrop(),
         }),
     });
+
     const [cards, setCards] = useState<CardType[]>([]);
 
     useEffect(() => {

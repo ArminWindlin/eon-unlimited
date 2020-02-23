@@ -9,7 +9,7 @@ const Deck: React.FC = () => {
     };
 
     return (
-        <div className="deck" onClick={draw}>Draw</div>
+            <div className="deck" onClick={draw}>Draw</div>
     );
 };
 

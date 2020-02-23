@@ -12,15 +12,11 @@ import {socket} from '../../utility/socket';
 const PlayGround: React.FC = () => {
 
     useEffect(() => {
-        socketSetup();
-    }, []);
-
-    const socketSetup = () => {
         socket.emit('MATCH_SEARCH');
         socket.on('MATCH_FOUND', (data: string) => {
             console.log('Match ID: ' + data);
         });
-    };
+    }, []);
 
     return (
             <div className="playground">
