@@ -19,7 +19,7 @@ export const getRandomCard = (index = -1) => {
         'Demonic Pact',
         'Flash',
         'Dungo',
-        'Giant Tree'
+        'Giant Tree',
     ];
     return {
         id: Math.floor(Math.random() * 10000),
@@ -29,6 +29,7 @@ export const getRandomCard = (index = -1) => {
         health: Math.floor(Math.random() * 20) + 1,
         mana: Math.floor(Math.random() * 10),
         selected: false,
-        index: index
+        index: index,
+        position: 'hand',
     };
 };

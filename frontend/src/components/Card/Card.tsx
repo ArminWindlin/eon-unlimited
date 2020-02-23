@@ -8,10 +8,9 @@ import {socket} from '../../utility/socket';
 interface CardProps {
     card: CardType,
     draggable: boolean,
-    selectCard: (cardIndex: number) => void
 }
 
-const Card: React.FC<CardProps> = ({card, selectCard, draggable = true}) => {
+const Card: React.FC<CardProps> = ({card, draggable = true}) => {
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.title, type: ItemTypes.CARD},
@@ -33,12 +32,16 @@ const Card: React.FC<CardProps> = ({card, selectCard, draggable = true}) => {
     const opacity = isDragging ? 0.4 : 1;
     let opacityStyle: React.CSSProperties = {opacity: opacity};
 
+    const selectCard = () => {
+        socket.emit('SELECT_CARD', {index: card.index, position: card.position});
+    };
+
     return (
-        <div className={'card' + (card.selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
-             onClick={() => selectCard(card.index)}>
-            <div className="card-title">{card.title}</div>
-            <div className="card-health">{card.health}</div>
-        </div>
+            <div className={'card' + (card.selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
+                 onClick={selectCard}>
+                <div className="card-title">{card.title}</div>
+                <div className="card-health">{card.health}</div>
+            </div>
     );
 };
 

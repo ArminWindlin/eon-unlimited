@@ -6,5 +6,6 @@ export default interface CardType {
     health: number,
     mana: number,
     selected: boolean,
-    index: number
+    index: number,
+    position: string
 }

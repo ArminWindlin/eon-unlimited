@@ -32,6 +32,12 @@ export function setupWebSockets(server) {
                 matchC.playCard(socketGameMap.get(socket.id), socket.id, data);
         });
 
+        // OTHER
+        socket.on('SELECT_CARD', (data) => {
+            if (socketGameMap.has(socket.id))
+                matchC.selectCard(socketGameMap.get(socket.id), socket.id, data.index, data.position);
+        });
+
     });
 
 }

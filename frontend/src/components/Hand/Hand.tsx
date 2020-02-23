@@ -14,15 +14,11 @@ const Hand: React.FC = () => {
         });
     }, []);
 
-    const selectCard = (cardIndex: number) => {
-        return false;
-    };
-
     return (
         <div className="hand">
             <div className="hand-card-container flex jc-c ai-c">
                 {cards.map((card, i) => {
-                    return <Card card={card} selectCard={selectCard} draggable={true} key={i}/>;
+                    return <Card card={card} draggable={true} key={i}/>;
                 })}
             </div>
         </div>

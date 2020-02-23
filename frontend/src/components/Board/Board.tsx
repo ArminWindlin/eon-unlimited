@@ -6,11 +6,7 @@ import Card from '../Card/Card';
 import CardType from '../../interfaces/CardType';
 import {socket} from '../../utility/socket';
 
-interface BoardProps {
-    selectCard: (cardIndex: number) => void
-}
-
-const Board: React.FC<BoardProps> = ({selectCard}) => {
+const Board: React.FC = () => {
 
     const [{canDrop, isOver}, drop] = useDrop({
         accept: ItemTypes.CARD,
@@ -38,7 +34,7 @@ const Board: React.FC<BoardProps> = ({selectCard}) => {
             <div className="board">
                 <div className="board-card-container flex jc-c ai-c" ref={drop} style={backgroundColorStyle}>
                     {cards.map((card, i) => {
-                        return <Card card={card} selectCard={selectCard} draggable={false} key={i}/>;
+                        return <Card card={card} draggable={false} key={i}/>;
                     })}
                 </div>
             </div>
