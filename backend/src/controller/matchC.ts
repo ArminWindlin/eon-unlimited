@@ -52,7 +52,7 @@ export const playCard = (extendedMatchId, socketId, cardIndex) => {
 
     // add card to board
     card.index = board.length;
-    card.position = 'board';
+    card.place = 'board';
     board.push(card);
 
     match[`hand${side}`] = hand;

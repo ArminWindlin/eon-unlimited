@@ -33,6 +33,7 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
     let opacityStyle: React.CSSProperties = {opacity: opacity};
 
     const selectCard = () => {
+        if(card.place === 'hand') return;
         socket.emit('SELECT_CARD', {index: card.index, side: card.side});
     };
 
