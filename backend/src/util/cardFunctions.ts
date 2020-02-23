@@ -1,3 +1,5 @@
+import Card from '../interfaces/card';
+
 export const getRandomCards = (amount) => {
     let cards = [];
     for (let i = 0; i < amount; i++) {
@@ -6,7 +8,7 @@ export const getRandomCards = (amount) => {
     return cards;
 };
 
-export const getRandomCard = (index = -1) => {
+export const getRandomCard = (index = -1, side = 1) => {
     const names: string[] = [
         'Dragon',
         'Heimer',
@@ -21,7 +23,7 @@ export const getRandomCard = (index = -1) => {
         'Dungo',
         'Giant Tree',
     ];
-    return {
+    let card: Card = {
         id: Math.floor(Math.random() * 10000),
         title: names[Math.floor(Math.random() * names.length)],
         offense: Math.floor(Math.random() * 20),
@@ -30,6 +32,8 @@ export const getRandomCard = (index = -1) => {
         mana: Math.floor(Math.random() * 10),
         selected: false,
         index: index,
-        position: 'hand',
+        place: 'hand',
+        side: side,
     };
+    return card;
 };
