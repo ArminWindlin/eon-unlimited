@@ -1,16 +1,15 @@
-import * as banana from "../controller/bananaC";
+import * as banana from '../controller/bananaC';
 
 export const routes = (app) => {
 
     // Add api's for /banana route
-    app.route('/banana')
-        .get(banana.getBananas)
-        .post(banana.addBanana);
+    app.route('/banana').get(banana.getBananas).post(banana.addBanana);
 
     // Add api's for /banana/:ID route
-    app.route('/banana/:id')
-        .get(banana.getBanana)
-        .delete(banana.deleteBanana);
+    app.route('/banana/:id').get(banana.getBanana).delete(banana.deleteBanana);
+
+    // Health check
+    app.route('/').get((req, res) => res.send('Backend running'));
 
 };
 
