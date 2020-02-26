@@ -77,11 +77,20 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
     } else {
         if (selectedCard === -1)
             return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
+        // run attack
         let enemyBoard = match[`board${enemySide}`];
-        enemyBoard.splice(cardIndex, 1);
-        board.splice(selectedCard, 1);
-        if (selectedCard !== board.length) updateIndexes(board);
-        if (cardIndex !== enemyBoard.length) updateIndexes(enemyBoard);
+        let card1 = board[selectedCard];
+        let card2 = enemyBoard[cardIndex];
+        card2.health -= card1.offense;
+        card1.health -= card2.defense;
+        if (card2.health <= 0) {
+            enemyBoard.splice(cardIndex, 1);
+            if (cardIndex !== enemyBoard.length) updateIndexes(enemyBoard);
+        }
+        if (card1.health <= 0) {
+            board.splice(selectedCard, 1);
+            if (selectedCard !== board.length) updateIndexes(board);
+        } else card1.selected = false;
         sendBoardUpdate(match, enemySide);
         match[`selectedCard${side}`] = -1;
     }
