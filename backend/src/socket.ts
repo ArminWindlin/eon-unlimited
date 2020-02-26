@@ -32,6 +32,11 @@ export function setupWebSockets(server) {
                 matchC.playCard(socketGameMap.get(socket.id), socket.id, data);
         });
 
+        socket.on('ACTION_ATTACK_PLAYER', (data) => {
+            if (socketGameMap.has(socket.id))
+                matchC.attackPlayer(socketGameMap.get(socket.id), socket.id);
+        });
+
         // OTHER
         socket.on('SELECT_CARD', (data) => {
             if (socketGameMap.has(socket.id))

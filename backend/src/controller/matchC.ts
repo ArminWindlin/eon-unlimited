@@ -13,6 +13,9 @@ export const startMatch = (socketId) => {
             hand1: [],
             board1: [],
             selectedCard1: -1,
+            life1: 100,
+            mana1: 20,
+            actions1: 10,
         };
         playerWaiting = true;
         return '1_' + currentMatchId;
@@ -22,6 +25,9 @@ export const startMatch = (socketId) => {
         match.hand2 = [];
         match.board2 = [];
         match.selectedCard2 = -1;
+        match.life2 = 100;
+        match.mana2 = 20;
+        match.actions2 = 10;
         playerWaiting = false;
         return '2_' + currentMatchId;
     }
@@ -35,6 +41,8 @@ export const drawCard = (extendedMatchId, socketId) => {
     hand.push(getRandomCard(hand.length, side));
     match[`hand${side}`] = hand;
     io.to(socketId).emit('UPDATE_HAND', hand);
+    match[`life${side}`]--;
+    sendLifeUpdate(match, side);
 };
 
 export const playCard = (extendedMatchId, socketId, cardIndex) => {
@@ -98,6 +106,18 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
     sendBoardUpdate(match, side);
 };
 
+export const attackPlayer = (extendedMatchId, socketId) => {
+    const [match, side] = getMatchAndSide(extendedMatchId);
+    let selectedCard = match[`selectedCard${side}`];
+    if (selectedCard === -1)
+        return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
+    match[`life${getEnemySide(side)}`] -= match[`board${side}`][selectedCard].offense;
+    match[`board${side}`][selectedCard].selected = false;
+    match[`selectedCard${side}`] = -1;
+    sendBoardUpdate(match, side);
+    sendLifeUpdate(match, getEnemySide(side));
+};
+
 const getMatchAndSide = (extendedMatchId) => {
     const [side, matchID] = extendedMatchId.split('_').map(x => Number(x));
     return [runningMatches[matchID], side];
@@ -117,6 +137,12 @@ const sendBoardUpdate = (match, side) => {
     const board = match[`board${side}`];
     io.to(match[`player${side}`]).emit('UPDATE_BOARD', board);
     io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_BOARD', board);
+};
+
+const sendLifeUpdate = (match, side) => {
+    const life = match[`life${side}`];
+    io.to(match[`player${side}`]).emit('UPDATE_LIFE', life);
+    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_LIFE', life);
 };
 
 
