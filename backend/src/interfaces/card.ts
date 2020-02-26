@@ -1,4 +1,4 @@
-export default interface CardType {
+export default interface Card {
     id: number,
     title: string,
     offense: number,
@@ -9,4 +9,4 @@ export default interface CardType {
     index: number,
     place: string,
     side: number
-}
+};

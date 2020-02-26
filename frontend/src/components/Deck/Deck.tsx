@@ -1,13 +1,15 @@
 import React from 'react';
 import './Deck.scss';
+import {socket} from '../../utility/socket';
 
-interface DeckProps {
-    drawCard: () => void,
-}
+const Deck: React.FC = () => {
 
-const Deck: React.FC<DeckProps> = ({drawCard}) => {
+    const draw = () => {
+        socket.emit('ACTION_DRAW');
+    };
+
     return (
-        <div className="deck" onClick={drawCard}>Draw</div>
+            <div className="deck" onClick={draw}>Draw</div>
     );
 };
 

@@ -1,9 +1,9 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import * as mongoose from "mongoose";
-import * as route from "./routes/routes";
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import * as mongoose from 'mongoose';
+import * as route from './routes/routes';
 import * as cors from 'cors';
-import {handleError} from "./util/error";
+import {handleError} from './util/error';
 
 class App {
 
@@ -19,7 +19,8 @@ class App {
 
     // Setup database connection
     private database(): void {
-        mongoose.connect('mongodb://localhost/ExampleDB', { useNewUrlParser: true });
+        mongoose.connect('mongodb://localhost/ExampleDB',
+            {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true});
     }
 
     // Middleware

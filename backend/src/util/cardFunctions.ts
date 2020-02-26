@@ -1,14 +1,14 @@
-import CardType from '../interfaces/CardType';
+import Card from '../interfaces/card';
 
-export const getRandomCards: (amount: number) => CardType[] = (amount) => {
-    let cards: CardType[] = [];
+export const getRandomCards = (amount) => {
+    let cards = [];
     for (let i = 0; i < amount; i++) {
         cards.push(getRandomCard(i));
     }
     return cards;
 };
 
-export const getRandomCard: (index: number) => CardType = (index = -1) => {
+export const getRandomCard = (index = -1, side = 1) => {
     const names: string[] = [
         'Dragon',
         'Heimer',
@@ -21,9 +21,9 @@ export const getRandomCard: (index: number) => CardType = (index = -1) => {
         'Demonic Pact',
         'Flash',
         'Dungo',
-        'Giant Tree'
+        'Giant Tree',
     ];
-    return {
+    let card: Card = {
         id: Math.floor(Math.random() * 10000),
         title: names[Math.floor(Math.random() * names.length)],
         offense: Math.floor(Math.random() * 20),
@@ -31,6 +31,9 @@ export const getRandomCard: (index: number) => CardType = (index = -1) => {
         health: Math.floor(Math.random() * 20) + 1,
         mana: Math.floor(Math.random() * 10),
         selected: false,
-        index: index
+        index: index,
+        place: 'hand',
+        side: side,
     };
+    return card;
 };

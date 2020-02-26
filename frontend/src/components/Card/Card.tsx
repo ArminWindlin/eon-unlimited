@@ -3,15 +3,14 @@ import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
 import ItemTypes from '../../interfaces/ItemTypes';
 import CardType from '../../interfaces/CardType';
+import {socket} from '../../utility/socket';
 
 interface CardProps {
     card: CardType,
     draggable: boolean,
-    moveCard: (cardIndex: number) => void,
-    selectCard: (cardIndex: number) => void
 }
 
-const Card: React.FC<CardProps> = ({card, moveCard, selectCard, draggable = true}) => {
+const Card: React.FC<CardProps> = ({card, draggable = true}) => {
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.title, type: ItemTypes.CARD},
@@ -19,7 +18,7 @@ const Card: React.FC<CardProps> = ({card, moveCard, selectCard, draggable = true
             const dropResult = monitor.getDropResult();
             if (item && dropResult) {
                 console.log(`You dropped ${item.name} into ${dropResult.name}!`);
-                moveCard(card.index);
+                socket.emit('ACTION_PLAY', card.index);
             }
         },
         collect: monitor => ({
@@ -33,12 +32,17 @@ const Card: React.FC<CardProps> = ({card, moveCard, selectCard, draggable = true
     const opacity = isDragging ? 0.4 : 1;
     let opacityStyle: React.CSSProperties = {opacity: opacity};
 
+    const selectCard = () => {
+        if(card.place === 'hand') return;
+        socket.emit('SELECT_CARD', {index: card.index, side: card.side});
+    };
+
     return (
-        <div className={'card' + (card.selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
-             onClick={() => selectCard(card.index)}>
-            <div className="card-title">{card.title}</div>
-            <div className="card-health">{card.health}</div>
-        </div>
+            <div className={'card' + (card.selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
+                 onClick={selectCard}>
+                <div className="card-title">{card.title}</div>
+                <div className="card-health">{card.health}</div>
+            </div>
     );
 };
 

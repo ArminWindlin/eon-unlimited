@@ -1,26 +1,27 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './EnemyBoard.scss';
 import Card from '../Card/Card';
 import CardType from '../../interfaces/CardType';
+import {socket} from '../../utility/socket';
 
-interface BoardProps {
-    cards: CardType[],
-    selectCard: (cardIndex: number) => void
-}
+const EnemyBoard: React.FC = () => {
 
-const EnemyBoard: React.FC<BoardProps> = ({cards, selectCard}) => {
+    const [cards, setCards] = useState<CardType[]>([]);
 
-    const moveCard = (cardIndex: number) => {
-    };
+    useEffect(() => {
+        socket.on('UPDATE_ENEMY_BOARD', (data: CardType[]) => {
+            setCards(data);
+        });
+    }, []);
 
     return (
-        <div className="enemy-board">
-            <div className="enemy-board-card-container flex jc-c ai-c">
-                {cards.map((card, i) => {
-                    return <Card card={card} moveCard={moveCard} selectCard={selectCard} draggable={false} key={i}/>;
-                })}
+            <div className="enemy-board">
+                <div className="enemy-board-card-container flex jc-c ai-c">
+                    {cards.map((card, i) => {
+                        return <Card card={card} draggable={false} key={i}/>;
+                    })}
+                </div>
             </div>
-        </div>
     );
 };
 
