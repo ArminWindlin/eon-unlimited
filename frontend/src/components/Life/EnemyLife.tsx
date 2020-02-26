@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './EnemyLife.scss';
+import './Life.scss';
 import {socket} from '../../utility/socket';
 
 const Life: React.FC = () => {
@@ -17,7 +17,7 @@ const Life: React.FC = () => {
     };
 
     return (
-            <div className="enemy-life clickable" onClick={attack}>{life}</div>
+            <div className="life enemy clickable" onClick={attack}>{life}</div>
     );
 };
 

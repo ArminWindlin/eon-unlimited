@@ -7,6 +7,10 @@ import Deck from '../Deck/Deck';
 import Hint from '../Hint/Hint';
 import Life from '../Life/Life';
 import EnemyLife from '../Life/EnemyLife';
+import Actions from '../Actions/Actions';
+import EnemyActions from '../Actions/EnemyActions';
+import Mana from '../Mana/Mana';
+import EnemyMana from '../Mana/EnemyMana';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import {socket} from '../../utility/socket';
@@ -30,6 +34,10 @@ const PlayGround: React.FC = () => {
                     <Hint/>
                     <Life/>
                     <EnemyLife/>
+                    <Actions/>
+                    <EnemyActions/>
+                    <Mana/>
+                    <EnemyMana/>
                 </DndProvider>
             </div>
     );

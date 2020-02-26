@@ -15,7 +15,7 @@ export const startMatch = (socketId) => {
             selectedCard1: -1,
             life1: 100,
             mana1: 20,
-            actions1: 10,
+            actions1: 6,
         };
         playerWaiting = true;
         return '1_' + currentMatchId;
@@ -27,7 +27,7 @@ export const startMatch = (socketId) => {
         match.selectedCard2 = -1;
         match.life2 = 100;
         match.mana2 = 20;
-        match.actions2 = 10;
+        match.actions2 = 6;
         playerWaiting = false;
         return '2_' + currentMatchId;
     }
