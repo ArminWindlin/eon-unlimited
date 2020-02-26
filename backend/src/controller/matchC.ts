@@ -35,18 +35,19 @@ export const startMatch = (socketId) => {
 
 export const drawCard = (extendedMatchId, socketId) => {
     const [match, side] = getMatchAndSide(extendedMatchId);
+    if (!changeActions(match, side, -1)) return;
     let hand = match[`hand${side}`];
     if (hand.length > 3)
         return io.to(socketId).emit('SHOW_HINT', 'Hand is full');
     hand.push(getRandomCard(hand.length, side));
     match[`hand${side}`] = hand;
     io.to(socketId).emit('UPDATE_HAND', hand);
-    match[`life${side}`]--;
-    sendLifeUpdate(match, side);
+    changeLife(match, getEnemySide(side), -1);
 };
 
 export const playCard = (extendedMatchId, socketId, cardIndex) => {
     const [match, side] = getMatchAndSide(extendedMatchId);
+    if (!changeActions(match, side, -1)) return;
     let hand = match[`hand${side}`];
     let board = match[`board${side}`];
 
@@ -86,6 +87,7 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
         if (selectedCard === -1)
             return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
         // run attack
+        if (!changeActions(match, side, -1)) return;
         let enemyBoard = match[`board${enemySide}`];
         let card1 = board[selectedCard];
         let card2 = enemyBoard[cardIndex];
@@ -108,14 +110,33 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
 
 export const attackPlayer = (extendedMatchId, socketId) => {
     const [match, side] = getMatchAndSide(extendedMatchId);
+    if (!changeActions(match, side, -2)) return;
     let selectedCard = match[`selectedCard${side}`];
     if (selectedCard === -1)
         return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
-    match[`life${getEnemySide(side)}`] -= match[`board${side}`][selectedCard].offense;
+    changeLife(match, getEnemySide(side), -match[`board${side}`][selectedCard].offense);
     match[`board${side}`][selectedCard].selected = false;
     match[`selectedCard${side}`] = -1;
     sendBoardUpdate(match, side);
-    sendLifeUpdate(match, getEnemySide(side));
+};
+
+const changeActions = (match, side, amount) => {
+    if (amount < 0 && match[`actions${side}`] + amount < 0) {
+        io.to(match[`player${side}`]).emit('SHOW_HINT', 'Not enough actions');
+        return false;
+    }
+    match[`actions${side}`] += amount;
+    const actions = match[`actions${side}`];
+    io.to(match[`player${side}`]).emit('UPDATE_ACTIONS', actions);
+    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_ACTIONS', actions);
+    return true;
+};
+
+const changeLife = (match, side, amount) => {
+    match[`life${side}`] += amount;
+    const life = match[`life${side}`];
+    io.to(match[`player${side}`]).emit('UPDATE_LIFE', life);
+    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_LIFE', life);
 };
 
 const getMatchAndSide = (extendedMatchId) => {
@@ -139,10 +160,11 @@ const sendBoardUpdate = (match, side) => {
     io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_BOARD', board);
 };
 
-const sendLifeUpdate = (match, side) => {
-    const life = match[`life${side}`];
-    io.to(match[`player${side}`]).emit('UPDATE_LIFE', life);
-    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_LIFE', life);
-};
-
-
+// action beat
+// TODO: move to different file
+setInterval(() => {
+    runningMatches.forEach(m => {
+        changeActions(m, 1, 1);
+        changeActions(m, 2, 1);
+    });
+}, 1000 * 5);
