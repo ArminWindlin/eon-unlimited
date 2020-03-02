@@ -11,15 +11,42 @@
     margin-top: 5px;
   }
 
+  &-stat {
+    font-weight: bold;
+    width: 24px;
+    border-radius: 6px;
+  }
+
   &-health {
     position: absolute;
     right: 10px;
-    font-weight: bold;
-    bottom: 10px
+    bottom: 10px;
+    background: rgba(0, 255, 0, 0.5);
+  }
+
+  &-offense {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(255, 0, 0, 0.5);
+  }
+
+  &-defense {
+    position: absolute;
+    left: calc(50% - 10px);
+    bottom: 10px;
+    background: rgba(0, 0, 255, 0.7);
+  }
+
+  &-mana {
+    position: absolute;
+    right: 10px;
+    top: 30px;
+    background: rgba(150, 0, 255, 0.8);
   }
 
   &.selected {
-    box-shadow: 0 0 0 3px rgba(255,255,0,0.8);
+    box-shadow: 0 0 0 3px rgba(255, 255, 0, 0.8);
   }
 
 }

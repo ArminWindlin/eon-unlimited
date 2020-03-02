@@ -41,7 +41,10 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
             <div className={'card' + (card.selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
                  onClick={selectCard}>
                 <div className="card-title">{card.title}</div>
-                <div className="card-health">{card.health}</div>
+                <div className="card-stat card-health">{card.health}</div>
+                <div className="card-stat card-defense">{card.defense}</div>
+                <div className="card-stat card-offense">{card.offense}</div>
+                <div className="card-stat card-mana">{card.mana}</div>
             </div>
     );
 };

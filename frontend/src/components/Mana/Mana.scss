@@ -1,0 +1,18 @@
+.mana {
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  position: fixed;
+  bottom: 0;
+  left: 50px;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  text-align: center;
+  background: rgba(150, 0, 255, 0.8);
+  font-weight: 600;
+  font-size: 30px;
+
+  &.enemy {
+    top: 0;
+  }
+}
