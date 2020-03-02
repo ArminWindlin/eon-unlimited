@@ -1,6 +1,7 @@
 import {getRandomCard} from '../util/cardFunctions';
 import {io} from '../socket';
-import Match from '../interfaces/match';
+import Player from '../classes/Player';
+import Match from '../classes/Match';
 
 const runningMatches: Match[] = [];
 let currentMatchId = -1;
@@ -12,48 +13,37 @@ const MAX_MANA = 20;
 
 export const startMatch = (socketId) => {
     if (!playerWaiting) {
-        runningMatches[++currentMatchId] = {
-            player1: socketId,
-            hand1: [],
-            board1: [],
-            selectedCard1: -1,
-            life1: 100,
-            mana1: 20,
-            actions1: 6,
-        };
+        runningMatches[++currentMatchId] = new Match(new Player(socketId));
         playerWaiting = true;
         return '1_' + currentMatchId;
     } else {
         let match = runningMatches[currentMatchId];
-        match.player2 = socketId;
-        match.hand2 = [];
-        match.board2 = [];
-        match.selectedCard2 = -1;
-        match.life2 = 100;
-        match.mana2 = 20;
-        match.actions2 = 6;
+        match.setPlayer2(new Player(socketId));
         playerWaiting = false;
         return '2_' + currentMatchId;
     }
 };
 
 export const drawCard = (extendedMatchId, socketId) => {
-    const [match, side] = getMatchAndSide(extendedMatchId);
+    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
+    if (!match.getPlayer(getEnemySide(side)))
+        return io.to(socketId).emit('SHOW_HINT', 'Wait for enemy');
     if (!changeActions(match, side, -1)) return;
-    let hand = match[`hand${side}`];
+    const player: Player = match.getPlayer(side);
+    let hand = player.hand;
     if (hand.length > 3)
         return io.to(socketId).emit('SHOW_HINT', 'Hand is full');
     hand.push(getRandomCard(hand.length, side));
-    match[`hand${side}`] = hand;
     io.to(socketId).emit('UPDATE_HAND', hand);
     changeLife(match, side, -1);
 };
 
 export const playCard = (extendedMatchId, socketId, cardIndex) => {
-    const [match, side] = getMatchAndSide(extendedMatchId);
+    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
     if (!changeActions(match, side, -1)) return;
-    let hand = match[`hand${side}`];
-    let board = match[`board${side}`];
+    const player: Player = match.getPlayer(side);
+    let hand = player.hand;
+    let board = player.board;
     let card = hand[cardIndex];
 
     if (board.length > 3)
@@ -71,16 +61,15 @@ export const playCard = (extendedMatchId, socketId, cardIndex) => {
     card.place = 'board';
     board.push(card);
 
-    match[`hand${side}`] = hand;
-    match[`board${side}`] = board;
     io.to(socketId).emit('UPDATE_HAND', hand);
     sendBoardUpdate(match, side);
 };
 
 export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
-    const [match, side] = getMatchAndSide(extendedMatchId);
-    let board = match[`board${side}`];
-    let selectedCard = match[`selectedCard${side}`];
+    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
+    const player: Player = match.getPlayer(side);
+    let board = player.board;
+    let selectedCard = player.selectedCard;
     let enemySide = getEnemySide(side);
     if (cardSide === side) {
         // deselect previous select
@@ -89,13 +78,13 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
         if (!board[cardIndex])
             return io.to(socketId).emit('SHOW_HINT', 'Card is gone');
         board[cardIndex].selected = true;
-        match[`selectedCard${side}`] = cardIndex;
+        player.selectedCard = cardIndex;
     } else {
         if (selectedCard === -1)
             return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
         // run attack
         if (!changeActions(match, side, -1)) return;
-        let enemyBoard = match[`board${enemySide}`];
+        let enemyBoard = match.getPlayer(getEnemySide(side)).board;
         let card1 = board[selectedCard];
         let card2 = enemyBoard[cardIndex];
         card2.health -= card1.offense;
@@ -109,58 +98,61 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
             if (selectedCard !== board.length) updateIndexes(board);
         } else card1.selected = false;
         sendBoardUpdate(match, enemySide);
-        match[`selectedCard${side}`] = -1;
+        player.selectedCard = -1;
     }
-    match[`board${side}`] = board;
     sendBoardUpdate(match, side);
 };
 
 export const attackPlayer = (extendedMatchId, socketId) => {
-    const [match, side] = getMatchAndSide(extendedMatchId);
+    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
     if (!changeActions(match, side, -2)) return;
-    let selectedCard = match[`selectedCard${side}`];
+    const player: Player = match.getPlayer(side);
+    let selectedCard = player.selectedCard;
     if (selectedCard === -1)
         return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
-    changeLife(match, getEnemySide(side), -match[`board${side}`][selectedCard].offense);
-    match[`board${side}`][selectedCard].selected = false;
-    match[`selectedCard${side}`] = -1;
+    changeLife(match, getEnemySide(side), -player.board[selectedCard].offense);
+    player.board[selectedCard].selected = false;
+    player.selectedCard = -1;
     sendBoardUpdate(match, side);
 };
 
-const changeActions = (match, side, amount) => {
-    if (amount < 0 && match[`actions${side}`] + amount < 0) {
-        io.to(match[`player${side}`]).emit('SHOW_HINT', 'Not enough actions');
+const changeActions = (match: Match, side, amount) => {
+    const player = match.getPlayer(side);
+    if (amount < 0 && player.actions + amount < 0) {
+        io.to(player.socketId).emit('SHOW_HINT', 'Not enough actions');
         return false;
     }
-    if (amount > 0 && match[`actions${side}`] >= MAX_ACTIONS) return;
-    match[`actions${side}`] += amount;
-    const actions = match[`actions${side}`];
-    io.to(match[`player${side}`]).emit('UPDATE_ACTIONS', actions);
-    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_ACTIONS', actions);
+    if (amount > 0 && player.actions >= MAX_ACTIONS) return;
+    player.actions += amount;
+    const actions = player.actions;
+    io.to(player.socketId).emit('UPDATE_ACTIONS', actions);
+    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_ACTIONS', actions);
     return true;
 };
 
 const changeMana = (match, side, amount) => {
-    if (amount < 0 && match[`mana${side}`] + amount < 0) {
-        io.to(match[`player${side}`]).emit('SHOW_HINT', 'Not enough mana');
+    const player = match.getPlayer(side);
+    if (amount < 0 && player.mana + amount < 0) {
+        io.to(player.socketId).emit('SHOW_HINT', 'Not enough mana');
         return false;
     }
-    if (amount > 0 && match[`mana${side}`] >= MAX_MANA) return;
-    match[`mana${side}`] += amount;
-    const mana = match[`mana${side}`];
-    io.to(match[`player${side}`]).emit('UPDATE_MANA', mana);
-    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_MANA', mana);
+    if (amount > 0 && player.mana >= MAX_MANA) return;
+    player.mana += amount;
+    const mana = player.mana;
+    io.to(player.socketId).emit('UPDATE_MANA', mana);
+    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_MANA', mana);
     return true;
 };
 
 const changeLife = (match, side, amount) => {
-    match[`life${side}`] += amount;
-    const life = match[`life${side}`];
-    io.to(match[`player${side}`]).emit('UPDATE_LIFE', life);
-    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_LIFE', life);
+    const player = match.getPlayer(side);
+    player.life += amount;
+    const life = player.life;
+    io.to(player.socketId).emit('UPDATE_LIFE', life);
+    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_LIFE', life);
 };
 
-const getMatchAndSide = (extendedMatchId) => {
+const getMatchAndSide = (extendedMatchId): [Match, number] => {
     const [side, matchID] = extendedMatchId.split('_').map(x => Number(x));
     return [runningMatches[matchID], side];
 };
@@ -176,18 +168,21 @@ const getEnemySide = (side) => {
 };
 
 const sendBoardUpdate = (match, side) => {
-    const board = match[`board${side}`];
-    io.to(match[`player${side}`]).emit('UPDATE_BOARD', board);
-    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_BOARD', board);
+    const player = match.getPlayer(side);
+    const board = player.board;
+    io.to(player.socketId).emit('UPDATE_BOARD', board);
+    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_BOARD', board);
 };
 
 // action and mana beat
 // TODO: move to different file
 setInterval(() => {
     runningMatches.forEach(m => {
-        changeActions(m, 1, 1);
-        changeActions(m, 2, 1);
-        changeMana(m, 1, 1);
-        changeMana(m, 2, 1);
+        if (m.started) {
+            changeActions(m, 1, 1);
+            changeActions(m, 2, 1);
+            changeMana(m, 1, 1);
+            changeMana(m, 2, 1);
+        }
     });
 }, 1000 * 5);
