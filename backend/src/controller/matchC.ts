@@ -6,6 +6,10 @@ const runningMatches: Match[] = [];
 let currentMatchId = -1;
 let playerWaiting = false;
 
+// config
+const MAX_ACTIONS = 10;
+const MAX_MANA = 20;
+
 export const startMatch = (socketId) => {
     if (!playerWaiting) {
         runningMatches[++currentMatchId] = {
@@ -42,7 +46,7 @@ export const drawCard = (extendedMatchId, socketId) => {
     hand.push(getRandomCard(hand.length, side));
     match[`hand${side}`] = hand;
     io.to(socketId).emit('UPDATE_HAND', hand);
-    changeLife(match, getEnemySide(side), -1);
+    changeLife(match, side, -1);
 };
 
 export const playCard = (extendedMatchId, socketId, cardIndex) => {
@@ -50,12 +54,15 @@ export const playCard = (extendedMatchId, socketId, cardIndex) => {
     if (!changeActions(match, side, -1)) return;
     let hand = match[`hand${side}`];
     let board = match[`board${side}`];
+    let card = hand[cardIndex];
 
     if (board.length > 3)
         return io.to(socketId).emit('SHOW_HINT', 'Board is full');
 
+    // remove mana
+    if (!changeMana(match, side, -card.mana)) return;
+
     // remove card from hand
-    let card = hand[cardIndex];
     hand.splice(cardIndex, 1);
     if (cardIndex !== hand.length) updateIndexes(hand);
 
@@ -125,10 +132,24 @@ const changeActions = (match, side, amount) => {
         io.to(match[`player${side}`]).emit('SHOW_HINT', 'Not enough actions');
         return false;
     }
+    if (amount > 0 && match[`actions${side}`] >= MAX_ACTIONS) return;
     match[`actions${side}`] += amount;
     const actions = match[`actions${side}`];
     io.to(match[`player${side}`]).emit('UPDATE_ACTIONS', actions);
     io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_ACTIONS', actions);
+    return true;
+};
+
+const changeMana = (match, side, amount) => {
+    if (amount < 0 && match[`mana${side}`] + amount < 0) {
+        io.to(match[`player${side}`]).emit('SHOW_HINT', 'Not enough mana');
+        return false;
+    }
+    if (amount > 0 && match[`mana${side}`] >= MAX_MANA) return;
+    match[`mana${side}`] += amount;
+    const mana = match[`mana${side}`];
+    io.to(match[`player${side}`]).emit('UPDATE_MANA', mana);
+    io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_MANA', mana);
     return true;
 };
 
@@ -160,11 +181,13 @@ const sendBoardUpdate = (match, side) => {
     io.to(match[`player${getEnemySide(side)}`]).emit('UPDATE_ENEMY_BOARD', board);
 };
 
-// action beat
+// action and mana beat
 // TODO: move to different file
 setInterval(() => {
     runningMatches.forEach(m => {
         changeActions(m, 1, 1);
         changeActions(m, 2, 1);
+        changeMana(m, 1, 1);
+        changeMana(m, 2, 1);
     });
 }, 1000 * 5);
