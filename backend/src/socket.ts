@@ -5,7 +5,7 @@ export let io;
 const socketGameMap = new Map();
 
 export function setupWebSockets(server) {
-    io = socketio(server);
+    io = socketio(server, {transports: ['websocket', 'polling']});
 
     io.on('connection', (socket) => {
 
