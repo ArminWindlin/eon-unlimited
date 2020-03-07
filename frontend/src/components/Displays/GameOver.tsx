@@ -1,16 +1,22 @@
 import React from 'react';
-import './Deck.scss';
-import {socket} from '../../utility/socket';
+import './GameOver.scss';
 
-const Deck: React.FC = () => {
+interface IGameOver {
+    message: string
+}
 
-    const draw = () => {
-        socket.emit('ACTION_DRAW');
+const GameOver: React.FC<IGameOver> = ({message}) => {
+
+    const reload = () => {
+        window.location.reload();
     };
 
     return (
-            <div className="deck" onClick={draw}>Draw</div>
+        <div className="game-over">
+            <div className="game-over-message">{message}</div>
+            <div className="game-over-replay clickable" onClick={reload}> Replay</div>
+        </div>
     );
 };
 
-export default Deck;
+export default GameOver;

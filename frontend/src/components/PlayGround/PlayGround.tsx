@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './PlayGround.scss';
 import Board from '../Board/Board';
 import EnemyBoard from '../Board/EnemyBoard';
@@ -11,16 +11,22 @@ import Actions from '../Actions/Actions';
 import EnemyActions from '../Actions/EnemyActions';
 import Mana from '../Mana/Mana';
 import EnemyMana from '../Mana/EnemyMana';
+import GameOver from '../Displays/GameOver';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import {socket} from '../../utility/socket';
 
 const PlayGround: React.FC = () => {
 
+    const [gameOverMessage, setGameOverMessage] = useState('');
+
     useEffect(() => {
         socket.emit('MATCH_SEARCH');
         socket.on('MATCH_FOUND', (data: string) => {
             console.log('Match ID: ' + data);
+        });
+        socket.on('MATCH_OVER', (data: string) => {
+            setGameOverMessage(data);
         });
     }, []);
 
@@ -38,6 +44,7 @@ const PlayGround: React.FC = () => {
                     <EnemyActions/>
                     <Mana/>
                     <EnemyMana/>
+                    {gameOverMessage !== '' && <GameOver message={gameOverMessage}/>}
                 </DndProvider>
             </div>
     );

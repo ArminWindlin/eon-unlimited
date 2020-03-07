@@ -150,6 +150,10 @@ const changeLife = (match, side, amount) => {
     const life = player.life;
     io.to(player.socketId).emit('UPDATE_LIFE', life);
     io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_LIFE', life);
+    if(life <= 0){
+        io.to(player.socketId).emit('MATCH_OVER', 'DEFEAT');
+        io.to(match.getPlayer(getEnemySide(side)).socketId).emit('MATCH_OVER', 'VICTORY');
+    }
 };
 
 const getMatchAndSide = (extendedMatchId): [Match, number] => {
