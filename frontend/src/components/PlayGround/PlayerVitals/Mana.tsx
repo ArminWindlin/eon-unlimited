@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import './Mana.scss';
+import './PlayerVitals.scss';
 import {socket} from '../../../utility/socket';
 
-const EnemyMana: React.FC = () => {
+const Mana: React.FC = () => {
 
     const [mana, setMana] = useState(20);
 
     useEffect(() => {
-        socket.on('UPDATE_ENEMY_MANA', (data: number) => {
+        socket.on('UPDATE_MANA', (data: number) => {
             setMana(data);
         });
     }, []);
 
     return (
-            <div className="mana enemy">{mana}</div>
+            <div className="mana">{mana}</div>
     );
 };
 
-export default EnemyMana;
+export default Mana;

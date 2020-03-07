@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './Actions.scss';
+import './PlayerVitals.scss';
 import {socket} from '../../../utility/socket';
 
 const EnemyActions: React.FC = () => {

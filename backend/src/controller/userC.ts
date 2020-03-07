@@ -28,7 +28,7 @@ export const addUser = async (_name, socketId) => {
 
         // check if user already exists
         let nameRegex = new RegExp(`^${name}$`, 'i');
-        if (await User.count({name: nameRegex}) > 0)
+        if (await User.countDocuments({name: nameRegex}) > 0)
             return sendErrorToSocket('Username already taken', socketId);
 
         // set name
