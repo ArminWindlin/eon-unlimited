@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './Mana.scss';
-import {socket} from '../../utility/socket';
+import {socket} from '../../../utility/socket';
 
 const EnemyMana: React.FC = () => {
 

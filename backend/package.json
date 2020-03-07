@@ -20,7 +20,9 @@
     "mongoose": "^5.0.11",
     "request": "^2.88.0",
     "socket.io": "^2.3.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "uuid-token-generator": "^1.0.0",
+    "winston": "^3.2.1"
   },
   "author": "Armin Windlin",
   "license": "ISC",

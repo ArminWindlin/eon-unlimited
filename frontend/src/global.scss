@@ -8,8 +8,11 @@ body {
     user-select: none;
 }
 
-.clickable {
-    cursor: pointer;
+.app {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(0, #FDBB2D 0%, #22C1C3 100%);
 }
 
 /* flex */
@@ -50,4 +53,37 @@ body {
 
 .flex.ai-fe {
     align-items: flex-end;
+}
+
+/* buttons */
+.button {
+    border-radius: 5px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 150px;
+    font-weight: 500;
+
+    &-blue {
+        background: rgba(0, 0, 255, 0.6);
+        color: white;
+
+        &:hover{
+            background: rgba(0, 0, 255, 0.7);
+        }
+
+    }
+}
+
+/* input */
+
+input {
+    border-radius: 5px;
+    border: 0;
+    padding: 5px;
+}
+
+/* other */
+.clickable {
+    cursor: pointer;
 }

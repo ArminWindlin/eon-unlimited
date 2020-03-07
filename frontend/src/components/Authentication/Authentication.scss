@@ -1,0 +1,23 @@
+.auth {
+  position: fixed;
+  left: 50vw;
+  top: 50vh;
+  transform: translateX(-50%) translateY(-50%);
+
+  &-change {
+    font-weight: bold;
+  }
+
+}
+
+.register {
+
+  &-name {
+    width: 150px;
+  }
+
+  &-submit {
+    margin: 10px 0;
+  }
+
+}

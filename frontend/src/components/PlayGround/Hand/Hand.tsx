@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import './Hand.scss';
 import Card from '../Card/Card';
-import CardType from '../../interfaces/CardType';
-import {socket} from '../../utility/socket';
+import CardType from '../../../interfaces/CardType';
+import {socket} from '../../../utility/socket';
 
 const Hand: React.FC = () => {
 

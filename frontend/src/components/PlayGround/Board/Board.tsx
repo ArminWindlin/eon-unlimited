@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import './Board.scss';
 import {useDrop} from 'react-dnd';
-import ItemTypes from '../../interfaces/ItemTypes';
+import ItemTypes from '../../../interfaces/ItemTypes';
 import Card from '../Card/Card';
-import CardType from '../../interfaces/CardType';
-import {socket} from '../../utility/socket';
+import CardType from '../../../interfaces/CardType';
+import {socket} from '../../../utility/socket';
 
 const Board: React.FC = () => {
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import './Deck.scss';
-import {socket} from '../../utility/socket';
+import {socket} from '../../../utility/socket';
 
 const Deck: React.FC = () => {
 

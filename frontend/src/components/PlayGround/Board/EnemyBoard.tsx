@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import './EnemyBoard.scss';
 import Card from '../Card/Card';
-import CardType from '../../interfaces/CardType';
-import {socket} from '../../utility/socket';
+import CardType from '../../../interfaces/CardType';
+import {socket} from '../../../utility/socket';
 
 const EnemyBoard: React.FC = () => {
 

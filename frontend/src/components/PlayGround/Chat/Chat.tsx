@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {socket} from '../../utility/socket';
+import {socket} from '../../../utility/socket';
 import './Chat.scss';
 
 const Chat: React.FC = () => {

@@ -1,19 +1,22 @@
-export const handleError = (err, req, res, next) => {
-    let code: Number = req.code ? req.code : res.statusCode.toString();
-    let status: String = "error";
+import * as winston from 'winston';
+import {clientSocketMap, io} from '../socket';
 
-    if (code == 404)
-        status = "not found";
-    else if (code == 422)
-        status = "unprocessable entity";
-    else if (code == 401)
-        status = "unauthorized";
-
-    res.status(code).send({
-        status: status,
-        code: code,
-        messages: 'ERROR: ' + err.message,
-        result: {}
-    });
-    console.log('ERROR:' + err.message);
+export const logError = (error, file = 'unknown', method = 'unknown') => {
+    console.log(`ERROR, File: ${file}, Method: ${method}, Message: ${error}`);
+    errorLog.error(`ERROR, File: ${file}, Method: ${method}, Message: ${error}`);
 };
+
+export const sendError = (message, userName) => {
+    io.to(clientSocketMap.get(userName)).emit('ERROR', message);
+};
+
+export const sendErrorToSocket = (message, socketId) => {
+    io.to(socketId).emit('ERROR', message);
+};
+
+const errorLog = winston.createLogger({
+    level: 'error',
+    transports: [
+        new winston.transports.File({filename: 'errors.log'}),
+    ],
+});

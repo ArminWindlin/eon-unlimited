@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './Actions.scss';
-import {socket} from '../../utility/socket';
+import {socket} from '../../../utility/socket';
 
 const Actions: React.FC = () => {
 
