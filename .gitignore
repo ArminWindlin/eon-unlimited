@@ -6,6 +6,7 @@ eon-unlimited.iml
 frontend/frontend.iml
 backend/backend.iml
 
+*.log
 
 ## FRONTEND ##
 # dependencies
