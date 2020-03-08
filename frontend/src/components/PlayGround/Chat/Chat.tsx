@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import {socket} from '../../../utility/socket';
 import './Chat.scss';
 
 const Chat: React.FC = () => {
@@ -12,7 +11,7 @@ const Chat: React.FC = () => {
     }, []);
 
     function socketSetup() {
-        socket.on('UPDATE_GLOBAL_MESSAGES', (data: string) => {
+        window.$socket.on('UPDATE_GLOBAL_MESSAGES', (data: string) => {
             messages.push(data);
             setMessages([...messages]);
         });
@@ -20,7 +19,7 @@ const Chat: React.FC = () => {
 
     function sendMessage(e: any) {
         e.preventDefault();
-        socket.emit('POST_GLOBAL_MESSAGE', message);
+        window.$socket.emit('POST_GLOBAL_MESSAGE', message);
         setMessage('');
     }
 

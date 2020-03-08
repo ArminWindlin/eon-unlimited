@@ -1,11 +1,10 @@
 import React from 'react';
 import './Deck.scss';
-import {socket} from '../../../utility/socket';
 
 const Deck: React.FC = () => {
 
     const draw = () => {
-        socket.emit('ACTION_DRAW');
+        window.$socket.emit('ACTION_DRAW');
     };
 
     return (

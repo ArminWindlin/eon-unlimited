@@ -13,18 +13,17 @@ import EnemyMana from './PlayerVitals/EnemyMana';
 import GameOver from './Displays/GameOver';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
-import {socket} from '../../utility/socket';
 
 const PlayGround: React.FC = () => {
 
     const [gameOverMessage, setGameOverMessage] = useState('');
 
     useEffect(() => {
-        socket.emit('MATCH_SEARCH');
-        socket.on('MATCH_FOUND', (data: string) => {
+        window.$socket.emit('MATCH_SEARCH');
+        window.$socket.on('MATCH_FOUND', (data: string) => {
             console.log('Match ID: ' + data);
         });
-        socket.on('MATCH_OVER', (data: string) => {
+        window.$socket.on('MATCH_OVER', (data: string) => {
             setGameOverMessage(data);
         });
     }, []);

@@ -2,14 +2,13 @@ import React, {useEffect, useState} from 'react';
 import './Hand.scss';
 import Card from '../Card/Card';
 import CardType from '../../../interfaces/CardType';
-import {socket} from '../../../utility/socket';
 
 const Hand: React.FC = () => {
 
     const [cards, setCards] = useState<CardType[]>([]);
 
     useEffect(() => {
-        socket.on('UPDATE_HAND', (data: CardType[]) => {
+        window.$socket.on('UPDATE_HAND', (data: CardType[]) => {
             setCards(data);
         });
     }, []);

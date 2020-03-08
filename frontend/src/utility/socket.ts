@@ -8,3 +8,9 @@ if (process.env.NODE_ENV === 'production') {
 console.log('Backend-Url:' + url);
 
 export const socket = io(url, {transports: ['websocket', 'polling']});
+
+// set socket as globally
+declare global {
+    interface Window { $socket: any; }
+}
+window.$socket = socket;

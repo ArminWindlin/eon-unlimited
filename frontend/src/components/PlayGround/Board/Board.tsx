@@ -4,7 +4,6 @@ import {useDrop} from 'react-dnd';
 import ItemTypes from '../../../interfaces/ItemTypes';
 import Card from '../Card/Card';
 import CardType from '../../../interfaces/CardType';
-import {socket} from '../../../utility/socket';
 
 const Board: React.FC = () => {
 
@@ -20,7 +19,7 @@ const Board: React.FC = () => {
     const [cards, setCards] = useState<CardType[]>([]);
 
     useEffect(() => {
-        socket.on('UPDATE_BOARD', (data: CardType[]) => {
+        window.$socket.on('UPDATE_BOARD', (data: CardType[]) => {
             setCards(data);
         });
     }, []);

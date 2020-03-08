@@ -3,7 +3,6 @@ import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
 import ItemTypes from '../../../interfaces/ItemTypes';
 import CardType from '../../../interfaces/CardType';
-import {socket} from '../../../utility/socket';
 
 interface CardProps {
     card: CardType,
@@ -18,7 +17,7 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
             const dropResult = monitor.getDropResult();
             if (item && dropResult) {
                 console.log(`You dropped ${item.name} into ${dropResult.name}!`);
-                socket.emit('ACTION_PLAY', card.index);
+                window.$socket.emit('ACTION_PLAY', card.index);
             }
         },
         collect: monitor => ({
@@ -34,7 +33,7 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
 
     const selectCard = () => {
         if(card.place === 'hand') return;
-        socket.emit('SELECT_CARD', {index: card.index, side: card.side});
+        window.$socket.emit('SELECT_CARD', {index: card.index, side: card.side});
     };
 
     return (

@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import './PlayerVitals.scss';
-import {socket} from '../../../utility/socket';
 
 const EnemyMana: React.FC = () => {
 
     const [mana, setMana] = useState(20);
 
     useEffect(() => {
-        socket.on('UPDATE_ENEMY_MANA', (data: number) => {
+        window.$socket.on('UPDATE_ENEMY_MANA', (data: number) => {
             setMana(data);
         });
     }, []);
