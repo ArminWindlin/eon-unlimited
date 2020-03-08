@@ -1,44 +1,59 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Chat.scss';
+
+interface Message {
+    text: string,
+    sender: string
+}
 
 const Chat: React.FC = () => {
 
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState<string>('');
 
     useEffect(() => {
-        socketSetup();
-    }, []);
+        if (!window.$socket._callbacks['$UPDATE_GAME_CHAT'])
+            window.$socket.on('UPDATE_GAME_CHAT', (data: Message) => {
+                addMessage(data);
+            });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_GAME_CHAT'];
+        };
+    });
 
-    function socketSetup() {
-        window.$socket.on('UPDATE_GLOBAL_MESSAGES', (data: string) => {
-            messages.push(data);
-            setMessages([...messages]);
-        });
-    }
-
-    function sendMessage(e: any) {
+    const sendMessage = (e: any) => {
         e.preventDefault();
-        window.$socket.emit('POST_GLOBAL_MESSAGE', message);
+        window.$socket.emit('POST_GAME_CHAT', message);
+        addMessage({text: message, sender: window.$name});
         setMessage('');
-    }
+    };
+
+    const addMessage = (message: Message) => {
+        messages.push(message);
+        if (messages.length > 5) messages.splice(0, 1);
+        setMessages([...messages]);
+    };
 
     const handleChange = (event: any) => {
         setMessage(event.target.value);
     };
 
     return (
-        <div className="chat">
-            <div className="chat-container">
-                {messages.map((message, i) => {
-                    return <div key={i}>{message}</div>;
-                })}
+            <div className="chat">
+                <div className="chat-container">
+                    {messages.map((message, i) => {
+                        return <div key={i}
+                                    className={`chat-message ${message.sender === window.$name ? 'align-right' : ''}`}>
+                            <div className="chat-message-sender">{message.sender}</div>
+                            <div className="chat-message-text">{message.text}</div>
+                        </div>;
+                    })}
+                </div>
+                <form onSubmit={sendMessage} className="chat-form" autoComplete="off">
+                    <input type="text" name="message" value={message} onChange={handleChange}/>
+                    <button type="submit" value="Submit" className="button button-blue">Send</button>
+                </form>
             </div>
-            <form onSubmit={sendMessage} className="chat-form">
-                <input type="text" name="message" value={message} onChange={handleChange}/>
-                <input type="submit" value="Submit"/>
-            </form>
-        </div>
     );
 };
 

@@ -28,11 +28,11 @@ const Board: React.FC = () => {
     let backgroundColor = 'transparent';
     if (isActive) backgroundColor = 'rgba(172, 166, 115, 0.9)';
     else if (canDrop) backgroundColor = 'rgba(172, 166, 115, 0.4)';
-    let backgroundColorStyle: React.CSSProperties = {backgroundColor: backgroundColor};
 
     return (
             <div className="board">
-                <div className="board-card-container flex jc-c ai-c" ref={drop} style={backgroundColorStyle}>
+                <div className="board-card-container flex jc-c ai-c" ref={drop}
+                     style={{backgroundColor: backgroundColor}}>
                     {cards.map((card, i) => {
                         return <Card card={card} draggable={false} key={i}/>;
                     })}

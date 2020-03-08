@@ -11,6 +11,7 @@ import EnemyActions from './PlayerVitals/EnemyActions';
 import Mana from './PlayerVitals/Mana';
 import EnemyMana from './PlayerVitals/EnemyMana';
 import GameOver from './Displays/GameOver';
+import Chat from './Chat/Chat';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import './PlayGround.scss';
@@ -35,6 +36,7 @@ const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
                 <DndProvider backend={Backend}>
                     <div className="playground-name">{window.$name}</div>
                     <div className="playground-enemy-name">{opponent}</div>
+                    <Chat/>
                     <EnemyBoard/>
                     <Board/>
                     <Hand/>

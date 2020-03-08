@@ -3,8 +3,6 @@ import {socket} from './utility/socket';
 import PlayGround from './components/PlayGround/PlayGround';
 import Auth from './components/Authentication/Auth';
 import MatchMaking from './components/MatchMaking/MatchMaking';
-// import Chat from './components/Chat';
-// TODO: info disabled chat, so i dont need to run backend, while only developing frontend
 
 const App: React.FC = () => {
 
@@ -45,7 +43,6 @@ const App: React.FC = () => {
             {activeComponent === 'auth' && <Auth/>}
             {activeComponent === 'matchmaking' && <MatchMaking/>}
             {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
-            {/*<Chat/>*/}
         </div>
     );
 };

@@ -1,15 +1,44 @@
 .chat {
   position: fixed;
-  background: lightblue;
   left: 0;
   bottom: 0;
+  margin: 5px;
 
   &-container {
-    max-height: 200px;
+    max-height: 500px;
     overflow: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
-  &-form {
+  &-message {
+    padding: 5px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    margin-bottom: 5px;
+    max-width: 231px;
+
+    &-sender {
+      font-size: 12px;
+    }
+
+    &-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    &.align-right {
+      text-align: right;
+    }
+
+  }
+
+  .button-blue {
+    margin-left: 2px;
+    width: 50px;
   }
 
 }
