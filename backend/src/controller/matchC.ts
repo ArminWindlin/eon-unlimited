@@ -121,7 +121,7 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
 
 export const attackPlayer = (socketId) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
-    if (!changeActions(match, side, -2)) return;
+    if (!changeActions(match, side, -4)) return;
     const player: Player = match.getPlayer(side);
     let selectedCard = player.selectedCard;
     if (selectedCard === -1)
@@ -203,8 +203,15 @@ setInterval(() => {
         if (m.started) {
             changeActions(m, 1, 1);
             changeActions(m, 2, 1);
+        }
+    });
+}, 1000 * 5);
+
+setInterval(() => {
+    runningMatches.forEach(m => {
+        if (m.started) {
             changeMana(m, 1, 1);
             changeMana(m, 2, 1);
         }
     });
-}, 1000 * 5);
+}, 1000 * 8);
