@@ -35,15 +35,15 @@ export const disconnect = (socketId) => {
     if (!matchId) return;
     const match = runningMatches[matchId];
     match.closed = true;
-    const opponent = match.getPlayer(getEnemySide(match.getSideBySocket(socketId)));
+    const opponent = match.getPlayer(getOpponentSide(match.getSideBySocket(socketId)));
     if (opponent)
         io.to(opponent.socketId).emit('MATCH_OVER', 'VICTORY (opponent disconnected)');
 };
 
 export const drawCard = (socketId) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
-    if (!match.getPlayer(getEnemySide(side)))
-        return io.to(socketId).emit('SHOW_HINT', 'Wait for enemy');
+    if (!match.getPlayer(getOpponentSide(side)))
+        return io.to(socketId).emit('SHOW_HINT', 'Wait for opponent');
     if (!changeActions(match, side, -1)) return;
     const player: Player = match.getPlayer(side);
     let hand = player.hand;
@@ -86,7 +86,7 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
     const player: Player = match.getPlayer(side);
     let board = player.board;
     let selectedCard = player.selectedCard;
-    let enemySide = getEnemySide(side);
+    let opponentSide = getOpponentSide(side);
     if (cardSide === side) {
         // deselect previous select
         if (selectedCard > -1) board[selectedCard].selected = false;
@@ -100,20 +100,20 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
             return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
         // run attack
         if (!changeActions(match, side, -1)) return;
-        let enemyBoard = match.getPlayer(getEnemySide(side)).board;
+        let opponentBoard = match.getPlayer(getOpponentSide(side)).board;
         let card1 = board[selectedCard];
-        let card2 = enemyBoard[cardIndex];
+        let card2 = opponentBoard[cardIndex];
         card2.health -= card1.offense;
         card1.health -= card2.defense;
         if (card2.health <= 0) {
-            enemyBoard.splice(cardIndex, 1);
-            if (cardIndex !== enemyBoard.length) updateIndexes(enemyBoard);
+            opponentBoard.splice(cardIndex, 1);
+            if (cardIndex !== opponentBoard.length) updateIndexes(opponentBoard);
         }
         if (card1.health <= 0) {
             board.splice(selectedCard, 1);
             if (selectedCard !== board.length) updateIndexes(board);
         } else card1.selected = false;
-        sendBoardUpdate(match, enemySide);
+        sendBoardUpdate(match, opponentSide);
         player.selectedCard = -1;
     }
     sendBoardUpdate(match, side);
@@ -126,10 +126,17 @@ export const attackPlayer = (socketId) => {
     let selectedCard = player.selectedCard;
     if (selectedCard === -1)
         return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
-    changeLife(match, getEnemySide(side), -player.board[selectedCard].offense);
+    changeLife(match, getOpponentSide(side), -player.board[selectedCard].offense);
     player.board[selectedCard].selected = false;
     player.selectedCard = -1;
     sendBoardUpdate(match, side);
+};
+
+export const sendMessage = (socketId, message) => {
+    const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    let player = match.getPlayer(side);
+    let opponent = match.getPlayer(getOpponentSide(side));
+    io.to(opponent.socketId).emit('UPDATE_GAME_CHAT', {text: message, sender: player.name});
 };
 
 const changeActions = (match: Match, side, amount) => {
@@ -142,7 +149,7 @@ const changeActions = (match: Match, side, amount) => {
     player.actions += amount;
     const actions = player.actions;
     io.to(player.socketId).emit('UPDATE_ACTIONS', actions);
-    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_ACTIONS', actions);
+    io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('UPDATE_ENEMY_ACTIONS', actions);
     return true;
 };
 
@@ -156,7 +163,7 @@ const changeMana = (match, side, amount) => {
     player.mana += amount;
     const mana = player.mana;
     io.to(player.socketId).emit('UPDATE_MANA', mana);
-    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_MANA', mana);
+    io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('UPDATE_ENEMY_MANA', mana);
     return true;
 };
 
@@ -165,10 +172,10 @@ const changeLife = (match, side, amount) => {
     player.life += amount;
     const life = player.life;
     io.to(player.socketId).emit('UPDATE_LIFE', life);
-    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_LIFE', life);
+    io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('UPDATE_ENEMY_LIFE', life);
     if (life <= 0) {
         io.to(player.socketId).emit('MATCH_OVER', 'DEFEAT');
-        io.to(match.getPlayer(getEnemySide(side)).socketId).emit('MATCH_OVER', 'VICTORY');
+        io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('MATCH_OVER', 'VICTORY');
     }
 };
 
@@ -185,7 +192,7 @@ const updateIndexes = (cardContainer) => {
     });
 };
 
-const getEnemySide = (side) => {
+const getOpponentSide = (side) => {
     return side === 1 ? 2 : 1;
 };
 
@@ -193,7 +200,7 @@ const sendBoardUpdate = (match, side) => {
     const player = match.getPlayer(side);
     const board = player.board;
     io.to(player.socketId).emit('UPDATE_BOARD', board);
-    io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_BOARD', board);
+    io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('UPDATE_ENEMY_BOARD', board);
 };
 
 // action and mana beat

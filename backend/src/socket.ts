@@ -41,8 +41,8 @@ export function setupWebSockets(server) {
         });
 
         // CHAT
-        socket.on('POST_GLOBAL_MESSAGE', (data) => {
-            socket.broadcast.emit('UPDATE_GLOBAL_MESSAGES', data);
+        socket.on('POST_GAME_CHAT', (data) => {
+            matchC.sendMessage(socket.id, data);
         });
 
         // MATCHMAKING
