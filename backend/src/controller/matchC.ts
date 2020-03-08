@@ -4,7 +4,7 @@ import Player from '../classes/Player';
 import Match from '../classes/Match';
 
 const runningMatches: Match[] = [];
-let currentMatchId = -1;
+let currentMatchId = 0;
 let playerWaiting = false;
 
 // config
@@ -13,7 +13,7 @@ const MAX_MANA = 20;
 
 export const startMatch = (socketId) => {
     const name = socketClientMap.get(socketId);
-    if (!playerWaiting) {
+    if (!playerWaiting || runningMatches[currentMatchId].closed) {
         runningMatches[++currentMatchId] = new Match(new Player(socketId, name));
         playerWaiting = true;
         if (socketGameMap.has(socketId)) socketGameMap.delete(socketId);
@@ -28,6 +28,12 @@ export const startMatch = (socketId) => {
         io.to(socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: match.player1.name});
         io.to(match.player1.socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: name});
     }
+};
+
+export const disconnect = (socketId) => {
+    const matchId = socketGameMap.get(socketId);
+    if (!matchId) return;
+    runningMatches[matchId].closed = true;
 };
 
 export const drawCard = (socketId) => {

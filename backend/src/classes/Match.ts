@@ -4,10 +4,12 @@ export default class Match {
     player1: Player;
     player2: Player;
     started: boolean;
+    closed: boolean;
 
     constructor(player: Player) {
         this.player1 = player;
         this.started = false;
+        this.closed = false;
     }
 
     setPlayer2(player: Player) {

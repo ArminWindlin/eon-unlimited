@@ -3,6 +3,7 @@ import * as matchC from './controller/matchC';
 import {User} from './model/user';
 import {sendErrorToSocket} from './util/error';
 import {addUser} from './controller/userC';
+import {match} from 'assert';
 
 export let io;
 export const clientSocketMap = new Map();
@@ -30,6 +31,14 @@ export function setupWebSockets(server) {
             clientSocketMap.set(userName, socket.id);
             socketClientMap.set(socket.id, userName);
             socket.emit('CONNECT_SUCCESS', userName);
+        });
+
+        socket.on('disconnect', () => {
+            if (socketClientMap.has(socket.id)) {
+                matchC.disconnect(socket.id);
+                clientSocketMap.delete(socketClientMap.get(socket.id));
+                socketClientMap.delete(socket.id);
+            }
         });
 
         // CHAT
