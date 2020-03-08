@@ -1,5 +1,5 @@
 import {getRandomCard} from '../util/cardFunctions';
-import {io} from '../socket';
+import {io, socketClientMap, socketGameMap} from '../socket';
 import Player from '../classes/Player';
 import Match from '../classes/Match';
 
@@ -12,20 +12,26 @@ const MAX_ACTIONS = 10;
 const MAX_MANA = 20;
 
 export const startMatch = (socketId) => {
+    const name = socketClientMap.get(socketId);
     if (!playerWaiting) {
-        runningMatches[++currentMatchId] = new Match(new Player(socketId));
+        runningMatches[++currentMatchId] = new Match(new Player(socketId, name));
         playerWaiting = true;
-        return '1_' + currentMatchId;
+        if (socketGameMap.has(socketId)) socketGameMap.delete(socketId);
+        socketGameMap.set(socketId, currentMatchId);
     } else {
         let match = runningMatches[currentMatchId];
-        match.setPlayer2(new Player(socketId));
+        match.setPlayer2(new Player(socketId, name));
         playerWaiting = false;
-        return '2_' + currentMatchId;
+        if (socketGameMap.has(socketId)) socketGameMap.delete(socketId);
+        socketGameMap.set(socketId, currentMatchId);
+        // match can start
+        io.to(socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: match.player1.name});
+        io.to(match.player1.socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: name});
     }
 };
 
-export const drawCard = (extendedMatchId, socketId) => {
-    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
+export const drawCard = (socketId) => {
+    const [match, side]: [Match, number] = getMatchAndSide(socketId);
     if (!match.getPlayer(getEnemySide(side)))
         return io.to(socketId).emit('SHOW_HINT', 'Wait for enemy');
     if (!changeActions(match, side, -1)) return;
@@ -38,8 +44,8 @@ export const drawCard = (extendedMatchId, socketId) => {
     changeLife(match, side, -1);
 };
 
-export const playCard = (extendedMatchId, socketId, cardIndex) => {
-    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
+export const playCard = (socketId, cardIndex) => {
+    const [match, side]: [Match, number] = getMatchAndSide(socketId);
     if (!changeActions(match, side, -1)) return;
     const player: Player = match.getPlayer(side);
     let hand = player.hand;
@@ -65,8 +71,8 @@ export const playCard = (extendedMatchId, socketId, cardIndex) => {
     sendBoardUpdate(match, side);
 };
 
-export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
-    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
+export const selectCard = (socketId, cardIndex, cardSide) => {
+    const [match, side]: [Match, number] = getMatchAndSide(socketId);
     const player: Player = match.getPlayer(side);
     let board = player.board;
     let selectedCard = player.selectedCard;
@@ -103,8 +109,8 @@ export const selectCard = (extendedMatchId, socketId, cardIndex, cardSide) => {
     sendBoardUpdate(match, side);
 };
 
-export const attackPlayer = (extendedMatchId, socketId) => {
-    const [match, side]: [Match, number] = getMatchAndSide(extendedMatchId);
+export const attackPlayer = (socketId) => {
+    const [match, side]: [Match, number] = getMatchAndSide(socketId);
     if (!changeActions(match, side, -2)) return;
     const player: Player = match.getPlayer(side);
     let selectedCard = player.selectedCard;
@@ -150,15 +156,17 @@ const changeLife = (match, side, amount) => {
     const life = player.life;
     io.to(player.socketId).emit('UPDATE_LIFE', life);
     io.to(match.getPlayer(getEnemySide(side)).socketId).emit('UPDATE_ENEMY_LIFE', life);
-    if(life <= 0){
+    if (life <= 0) {
         io.to(player.socketId).emit('MATCH_OVER', 'DEFEAT');
         io.to(match.getPlayer(getEnemySide(side)).socketId).emit('MATCH_OVER', 'VICTORY');
     }
 };
 
-const getMatchAndSide = (extendedMatchId): [Match, number] => {
-    const [side, matchID] = extendedMatchId.split('_').map(x => Number(x));
-    return [runningMatches[matchID], side];
+const getMatchAndSide = (socketId): [Match, number] => {
+    const matchId = socketGameMap.get(socketId);
+    const match = runningMatches[matchId];
+    const side = match.getSideBySocket(socketId);
+    return [match, side];
 };
 
 const updateIndexes = (cardContainer) => {

@@ -41,7 +41,7 @@ export const addUser = async (_name, socketId) => {
         const user = new User(newUser);
         await user.save();
 
-        io.to(socketId).emit('UPDATE_TOKEN', newUser.token);
+        io.to(socketId).emit('UPDATE_TOKEN', {token: newUser.token, name: name});
     } catch (err) {
         logError(err, 'userC', 'addUser');
         sendErrorToSocket(err, socketId);

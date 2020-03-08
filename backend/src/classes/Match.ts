@@ -19,5 +19,8 @@ export default class Match {
         return this[`player${side}`];
     }
 
+    getSideBySocket(socketId: string): number {
+        return this.player1.socketId === socketId ? 1 : 2;
+    }
 
 }

@@ -13,16 +13,18 @@ import EnemyMana from './PlayerVitals/EnemyMana';
 import GameOver from './Displays/GameOver';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
+import './PlayGround.scss';
 
-const PlayGround: React.FC = () => {
+interface IPlayGround {
+    opponent: string
+}
+
+const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
 
     const [gameOverMessage, setGameOverMessage] = useState('');
 
     useEffect(() => {
         window.$socket.emit('MATCH_SEARCH');
-        window.$socket.on('MATCH_FOUND', (data: string) => {
-            console.log('Match ID: ' + data);
-        });
         window.$socket.on('MATCH_OVER', (data: string) => {
             setGameOverMessage(data);
         });
@@ -31,6 +33,8 @@ const PlayGround: React.FC = () => {
     return (
             <div className="playground">
                 <DndProvider backend={Backend}>
+                    <div className="playground-name">{window.$name}</div>
+                    <div className="playground-enemy-name">{opponent}</div>
                     <EnemyBoard/>
                     <Board/>
                     <Hand/>
