@@ -3,7 +3,6 @@ import * as matchC from './controller/matchC';
 import {User} from './model/user';
 import {sendErrorToSocket} from './util/error';
 import {addUser} from './controller/userC';
-import {match} from 'assert';
 
 export let io;
 export const clientSocketMap = new Map();

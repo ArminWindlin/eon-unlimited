@@ -33,7 +33,11 @@ export const startMatch = (socketId) => {
 export const disconnect = (socketId) => {
     const matchId = socketGameMap.get(socketId);
     if (!matchId) return;
-    runningMatches[matchId].closed = true;
+    const match = runningMatches[matchId];
+    match.closed = true;
+    const opponent = match.getPlayer(getEnemySide(match.getSideBySocket(socketId)));
+    if (opponent)
+        io.to(opponent.socketId).emit('MATCH_OVER', 'VICTORY (opponent disconnected)');
 };
 
 export const drawCard = (socketId) => {

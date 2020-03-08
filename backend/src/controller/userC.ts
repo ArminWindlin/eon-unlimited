@@ -1,7 +1,7 @@
 import {User} from '../model/user';
 import {logError, sendErrorToSocket} from '../util/error';
 import * as TokenGenerator from 'uuid-token-generator';
-import {io} from '../socket';
+import {io, socketClientMap, clientSocketMap} from '../socket';
 
 const tokgen = new TokenGenerator(512, TokenGenerator.BASE62);
 
@@ -41,7 +41,9 @@ export const addUser = async (_name, socketId) => {
         const user = new User(newUser);
         await user.save();
 
-        io.to(socketId).emit('UPDATE_TOKEN', {token: newUser.token, name: name});
+        clientSocketMap.set(name, socketId);
+        socketClientMap.set(socketId, name);
+        io.to(socketId).emit('UPDATE_TOKEN', {token: newUser.token, userName: name});
     } catch (err) {
         logError(err, 'userC', 'addUser');
         sendErrorToSocket(err, socketId);
