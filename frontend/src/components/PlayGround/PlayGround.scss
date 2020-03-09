@@ -1,6 +1,20 @@
 .playground {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(0, #FDBB2D 0%, #22C1C3 100%);
+
+  &-name {
+    position: fixed;
+    bottom: 5px;
+    left: 250px;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  &-enemy-name {
+    position: fixed;
+    top: 10px;
+    left: 20px;
+    font-weight: 500;
+    font-size: 20px;
+  }
+
 }

@@ -1,32 +1,42 @@
-import React, {useEffect} from 'react';
-import './PlayGround.scss';
-import Board from '../Board/Board';
-import EnemyBoard from '../Board/EnemyBoard';
-import Hand from '../Hand/Hand';
-import Deck from '../Deck/Deck';
-import Hint from '../Hint/Hint';
-import Life from '../Life/Life';
-import EnemyLife from '../Life/EnemyLife';
-import Actions from '../Actions/Actions';
-import EnemyActions from '../Actions/EnemyActions';
-import Mana from '../Mana/Mana';
-import EnemyMana from '../Mana/EnemyMana';
+import React, {useEffect, useState} from 'react';
+import Board from './Board/Board';
+import EnemyBoard from './Board/EnemyBoard';
+import Hand from './Hand/Hand';
+import Deck from './Deck/Deck';
+import Hint from './Hint/Hint';
+import Life from './PlayerVitals/Life';
+import EnemyLife from './PlayerVitals/EnemyLife';
+import Actions from './PlayerVitals/Actions';
+import EnemyActions from './PlayerVitals/EnemyActions';
+import Mana from './PlayerVitals/Mana';
+import EnemyMana from './PlayerVitals/EnemyMana';
+import GameOver from './Displays/GameOver';
+import Chat from './Chat/Chat';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
-import {socket} from '../../utility/socket';
+import './PlayGround.scss';
 
-const PlayGround: React.FC = () => {
+interface IPlayGround {
+    opponent: string
+}
+
+const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
+
+    const [gameOverMessage, setGameOverMessage] = useState('');
 
     useEffect(() => {
-        socket.emit('MATCH_SEARCH');
-        socket.on('MATCH_FOUND', (data: string) => {
-            console.log('Match ID: ' + data);
+        window.$socket.emit('MATCH_SEARCH');
+        window.$socket.on('MATCH_OVER', (data: string) => {
+            setGameOverMessage(data);
         });
     }, []);
 
     return (
             <div className="playground">
                 <DndProvider backend={Backend}>
+                    <div className="playground-name">{window.$name}</div>
+                    <div className="playground-enemy-name">{opponent}</div>
+                    <Chat/>
                     <EnemyBoard/>
                     <Board/>
                     <Hand/>
@@ -38,6 +48,7 @@ const PlayGround: React.FC = () => {
                     <EnemyActions/>
                     <Mana/>
                     <EnemyMana/>
+                    {gameOverMessage !== '' && <GameOver message={gameOverMessage}/>}
                 </DndProvider>
             </div>
     );

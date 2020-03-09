@@ -1,0 +1,16 @@
+.deck {
+  width: 50px;
+  height: 180px;
+  line-height: 180px;
+  position: fixed;
+  bottom: 0;
+  right: calc(50vw - 370px);;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  text-align: center;
+
+  &:hover {
+    background: rgba(0, 0, 200, 0.5);
+  }
+
+}

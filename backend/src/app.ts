@@ -3,7 +3,6 @@ import * as bodyParser from 'body-parser';
 import * as mongoose from 'mongoose';
 import * as route from './routes/routes';
 import * as cors from 'cors';
-import {handleError} from './util/error';
 
 class App {
 
@@ -14,12 +13,11 @@ class App {
         this.database();
         this.config();
         this.routes();
-        this.errors();
     }
 
     // Setup database connection
     private database(): void {
-        mongoose.connect('mongodb://localhost/ExampleDB',
+        mongoose.connect('mongodb+srv://TestUser:test@eoncluster-deeoa.gcp.mongodb.net/test?retryWrites=true&w=majority',
             {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true});
     }
 
@@ -33,11 +31,6 @@ class App {
     // Bind routes
     private routes(): void {
         route.routes(this.app);
-    }
-
-    //error handling
-    private errors(): void {
-        this.app.use(handleError);
     }
 
 }
