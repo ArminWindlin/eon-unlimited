@@ -26,5 +26,10 @@
   },
   "author": "Armin Windlin",
   "license": "ISC",
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "babel-polyfill": "^6.26.0",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.1"
+  }
 }
