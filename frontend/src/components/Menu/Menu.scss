@@ -13,6 +13,22 @@
     position: absolute;
     bottom: 20px;
     right: 20px;
+    width: 80px;
+  }
+
+}
+
+.settings {
+  position: fixed;
+  right: 0;
+  width: 300px;
+  padding: 20px;
+  height: calc(100vh - 40px);
+  background: rgba(0, 0, 0, 0.1);
+
+  &-button {
+    margin: 10px 0;
+    width: 146px;
   }
 
 }
