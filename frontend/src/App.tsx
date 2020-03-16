@@ -3,12 +3,14 @@ import {socket} from './utility/socket';
 import PlayGround from './components/PlayGround/PlayGround';
 import Auth from './components/Authentication/Auth';
 import MatchMaking from './components/MatchMaking/MatchMaking';
+import Menu from './components/Menu/Menu';
 
 const App: React.FC = () => {
 
     /*
     * auth
     * loading
+    * menu
     * matchmaking
     * play
     */
@@ -21,7 +23,7 @@ const App: React.FC = () => {
         else setActiveComponent('auth');
         socket.on('CONNECT_SUCCESS', (data: string) => {
             window.$name = data;
-            setActiveComponent('matchmaking');
+            setActiveComponent('menu');
         });
         socket.on('CONNECT_ERROR', () => {
             setActiveComponent('auth');
@@ -29,7 +31,7 @@ const App: React.FC = () => {
         socket.on('UPDATE_TOKEN', (data: any) => {
             window.$name = data.userName;
             localStorage.setItem('token', data.token);
-            setActiveComponent('matchmaking');
+            setActiveComponent('menu');
         });
         window.$socket.on('MATCH_FOUND', (data: any) => {
             console.log('Match ID: ' + data.matchId);
@@ -38,12 +40,18 @@ const App: React.FC = () => {
         });
     }, []);
 
+    const searchMatch = () => {
+        setActiveComponent('matchmaking');
+    };
+
     return (
-        <div className="app">
-            {activeComponent === 'auth' && <Auth/>}
-            {activeComponent === 'matchmaking' && <MatchMaking/>}
-            {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
-        </div>
+            <div className="app">
+                {activeComponent === 'auth' && <Auth/>}
+                {activeComponent === 'menu' && <Menu searchMatch={searchMatch}/>}
+                {activeComponent === 'matchmaking' && <MatchMaking/>}
+                {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
+                {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
+            </div>
     );
 };
 

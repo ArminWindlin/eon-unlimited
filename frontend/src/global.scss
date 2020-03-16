@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Baloo+2&display=swap');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
+  font-family: 'Baloo 2', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
@@ -13,6 +13,14 @@ body {
   width: 100vw;
   height: 100vh;
   background: linear-gradient(0, #FDBB2D 0%, #22C1C3 100%);
+
+  .logo-fixed {
+    font-weight: bold;
+    font-size: 40px;
+    position: fixed;
+    left: 20px;
+    top: 20px;
+  }
 }
 
 /* flex */
@@ -57,28 +65,21 @@ body {
 
 /* buttons */
 .button {
-  border: 0;
+  border: 2px solid rgba(0, 0, 0, 0.5);
   border-radius: 5px;
   height: 30px;
   line-height: 30px;
   text-align: center;
-  width: 150px;
-  font-weight: 500;
-  padding: 0;
+  padding: 0 5px;
+  cursor: pointer;
 
-  &-blue {
-    background: rgba(0, 0, 255, 0.6);
-    color: white;
-
-    &:hover {
-      background: rgba(0, 0, 255, 0.7);
-    }
-
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
   }
+
 }
 
 /* input */
-
 input {
   border-radius: 5px;
   border: 0;
@@ -87,6 +88,8 @@ input {
   line-height: 20px;
   outline: 0;
   user-select: text;
+  width: 150px;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 /* other */

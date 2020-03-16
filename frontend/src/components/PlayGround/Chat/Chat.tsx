@@ -49,9 +49,9 @@ const Chat: React.FC = () => {
                         </div>;
                     })}
                 </div>
-                <form onSubmit={sendMessage} className="chat-form" autoComplete="off">
+                <form onSubmit={sendMessage} className="chat-form flex ai-c" autoComplete="off">
                     <input type="text" name="message" value={message} onChange={handleChange}/>
-                    <button type="submit" value="Submit" className="button button-blue">Send</button>
+                    <button type="submit" value="Submit" className="button">Send</button>
                 </form>
             </div>
     );

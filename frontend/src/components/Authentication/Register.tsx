@@ -23,7 +23,7 @@ const Register: React.FC = () => {
         <div className="register flex column ai-c">
             <input className="register-name" placeholder={'Enter Username'} value={name}
                    onChange={e => setName(e.target.value)} onKeyDown={handleKeyDown}/>
-            <div className="register-submit button button-blue" onClick={register}>Register</div>
+            <div className="register-submit button" onClick={register}>Register</div>
         </div>
     );
 };
