@@ -36,6 +36,10 @@ export function setupWebSockets(server) {
             socket.emit('CONNECT_SUCCESS', userName);
         });
 
+        socket.on('PUT_PASSWORD', (data) => {
+            userC.updatePassword(socketClientMap.get(socket.id), data, socket.id);
+        });
+
         socket.on('disconnect', () => {
             if (socketClientMap.has(socket.id)) {
                 matchC.disconnect(socket.id);
