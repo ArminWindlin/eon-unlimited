@@ -4,6 +4,7 @@ import PlayGround from './components/PlayGround/PlayGround';
 import Auth from './components/Authentication/Auth';
 import MatchMaking from './components/MatchMaking/MatchMaking';
 import Menu from './components/Menu/Menu';
+import Notification from './components/Various/Notification';
 
 const App: React.FC = () => {
 
@@ -16,10 +17,8 @@ const App: React.FC = () => {
     */
     const [activeComponent, setActiveComponent] = useState('loading');
     const [opponent, setOpponent] = useState('');
-    const [initialised, setInitialised] = useState(false);
 
     useEffect(() => {
-        if (initialised) return;
         const token = localStorage.getItem('token') || null;
         if (token) socket.emit('CONNECT_USER', token);
         else setActiveComponent('auth');
@@ -40,7 +39,6 @@ const App: React.FC = () => {
             setOpponent(data.opponent);
             setActiveComponent('play');
         });
-        setInitialised(true);
     }, []);
 
     const searchMatch = () => {
@@ -58,6 +56,7 @@ const App: React.FC = () => {
                 {activeComponent === 'matchmaking' && <MatchMaking/>}
                 {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
+                <Notification/>
             </div>
     );
 };

@@ -22,3 +22,21 @@
   }
 
 }
+
+.login {
+
+  &-name {
+    width: 144px;
+    margin-bottom: 10px;
+  }
+
+  &-password {
+    width: 144px;
+  }
+
+  &-submit {
+    margin: 10px 0;
+    width: 140px;
+  }
+
+}
