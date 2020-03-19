@@ -3,7 +3,7 @@ import {io, socketClientMap, socketGameMap} from '../socket';
 import Player from '../classes/Player';
 import Match from '../classes/Match';
 
-const runningMatches: Match[] = [];
+export const runningMatches: Match[] = [];
 let currentMatchId = 0;
 let playerWaiting = false;
 
@@ -192,7 +192,7 @@ const updateIndexes = (cardContainer) => {
     });
 };
 
-const getOpponentSide = (side) => {
+export const getOpponentSide = (side) => {
     return side === 1 ? 2 : 1;
 };
 
