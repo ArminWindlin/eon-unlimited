@@ -62,7 +62,7 @@ export const updatePassword = async (userName, password, socketId) => {
             return sendErrorToSocket('Password needs to contain at least 4 signs.', socketId);
 
         const hash = await pass.hash(password, saltRounds);
-        await User.updateOne({name: userName}, {password: hash});
+        await User.updateOne({name: userName}, {password: hash, passwordSet: true});
 
         io.to(socketId).emit('INFO', 'Successfully updated password');
     } catch (err) {

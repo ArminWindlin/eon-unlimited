@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './Notification.scss'
+import './Notification.scss';
 
 const Notification: React.FC = () => {
 

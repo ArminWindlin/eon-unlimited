@@ -1,5 +1,5 @@
-import * as mongoose from "mongoose";
-import {Schema} from "mongoose";
+import * as mongoose from 'mongoose';
+import {Schema} from 'mongoose';
 
 // Create schema for user collection
 const UserSchema: Schema = new Schema({
@@ -26,8 +26,12 @@ const UserSchema: Schema = new Schema({
     registerAt: {
         type: Date,
         default: Date.now,
+    },
+    passwordSet: {
+        type: Boolean,
+        default: false,
     }
 });
 
 // Export schema for user collection
-export const User =  mongoose.model('users', UserSchema);
+export const User = mongoose.model('users', UserSchema);

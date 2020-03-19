@@ -39,3 +39,18 @@
   }
 
 }
+
+.password-hint {
+  background-color: rgba(255, 0, 0, 0.5);
+  position: fixed;
+  font-weight: bold;
+  font-size: 24px;
+  left: 50vw;
+  bottom: 20px;
+  width: 300px;
+  padding: 20px;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}

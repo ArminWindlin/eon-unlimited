@@ -22,8 +22,9 @@ const App: React.FC = () => {
         const token = localStorage.getItem('token') || null;
         if (token) socket.emit('CONNECT_USER', token);
         else setActiveComponent('auth');
-        socket.on('CONNECT_SUCCESS', (data: string) => {
-            window.$name = data;
+        socket.on('CONNECT_SUCCESS', (data: any) => {
+            window.$name = data.name;
+            window.$user = data;
             setActiveComponent('menu');
         });
         socket.on('CONNECT_ERROR', () => {
@@ -67,6 +68,7 @@ export default App;
 declare global {
     interface Window {
         $socket: any,
-        $name: string
+        $name: string,
+        $user: any
     }
 }

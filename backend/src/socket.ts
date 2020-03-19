@@ -33,7 +33,7 @@ export function setupWebSockets(server) {
             let userName = userR.toObject().name;
             clientSocketMap.set(userName, socket.id);
             socketClientMap.set(socket.id, userName);
-            socket.emit('CONNECT_SUCCESS', userName);
+            socket.emit('CONNECT_SUCCESS', userR.toObject());
         });
 
         socket.on('PUT_PASSWORD', (data) => {

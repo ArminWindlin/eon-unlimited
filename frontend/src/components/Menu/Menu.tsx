@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Menu.scss';
 import Settings from './Settings';
+import PasswordHint from './PasswordHint';
 
 interface IMenu {
     searchMatch: () => void,
@@ -9,10 +10,22 @@ interface IMenu {
 
 const Menu: React.FC<IMenu> = ({searchMatch, logout}) => {
 
+    const [displayPasswordHint, setDisplayPasswordHint] = useState(false);
+
+    useEffect(() => {
+        if (!window.$user.passwordSet) setDisplayPasswordHint(true);
+    }, []);
+
     const [settingsOpened, setSettingsOpened] = useState(false);
 
     const toggleSettings = () => {
         setSettingsOpened(!settingsOpened);
+    };
+
+    const hintOnClick = () => {
+        setSettingsOpened(true);
+        // TODO: only make hint disappear when password is actually updated
+        setDisplayPasswordHint(false);
     };
 
     return (
@@ -25,6 +38,7 @@ const Menu: React.FC<IMenu> = ({searchMatch, logout}) => {
                 <div className="button menu-logout-button" onClick={logout}>
                     Logout
                 </div>
+                {displayPasswordHint && <PasswordHint hintOnClick={hintOnClick}/>}
             </div>
     );
 };
