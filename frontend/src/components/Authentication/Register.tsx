@@ -4,13 +4,6 @@ const Register: React.FC = () => {
 
     const [name, setName] = useState('');
 
-    useEffect(() => {
-        let token = localStorage.getItem('token');
-        window.$socket.emit('CONNECT_USER', token);
-        window.$socket.on('CONNECT_ERROR', () => {
-        });
-    }, []);
-
     const register = () => {
         window.$socket.emit('REGISTER', name);
     };

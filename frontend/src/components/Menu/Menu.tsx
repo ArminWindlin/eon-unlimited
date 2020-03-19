@@ -3,12 +3,13 @@ import './Menu.scss';
 import Settings from './Settings';
 
 interface IMenu {
-    searchMatch: () => void
+    searchMatch: () => void,
+    logout: () => void
 }
 
-const Menu: React.FC<IMenu> = ({searchMatch}) => {
+const Menu: React.FC<IMenu> = ({searchMatch, logout}) => {
 
-    const [settingsOpened, setSettingsOpened] = useState(true);
+    const [settingsOpened, setSettingsOpened] = useState(false);
 
     const toggleSettings = () => {
         setSettingsOpened(!settingsOpened);
@@ -20,6 +21,9 @@ const Menu: React.FC<IMenu> = ({searchMatch}) => {
                 {settingsOpened && <Settings/>}
                 <div className="button menu-settings-button" onClick={toggleSettings}>
                     {settingsOpened ? 'Close' : 'Settings'}
+                </div>
+                <div className="button menu-logout-button" onClick={logout}>
+                    Logout
                 </div>
             </div>
     );

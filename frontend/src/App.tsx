@@ -16,8 +16,10 @@ const App: React.FC = () => {
     */
     const [activeComponent, setActiveComponent] = useState('loading');
     const [opponent, setOpponent] = useState('');
+    const [initialised, setInitialised] = useState(false);
 
     useEffect(() => {
+        if (initialised) return;
         const token = localStorage.getItem('token') || null;
         if (token) socket.emit('CONNECT_USER', token);
         else setActiveComponent('auth');
@@ -38,16 +40,21 @@ const App: React.FC = () => {
             setOpponent(data.opponent);
             setActiveComponent('play');
         });
+        setInitialised(true);
     }, []);
 
     const searchMatch = () => {
         setActiveComponent('matchmaking');
     };
 
+    const logout = async () => {
+        setActiveComponent('auth');
+    };
+
     return (
             <div className="app">
                 {activeComponent === 'auth' && <Auth/>}
-                {activeComponent === 'menu' && <Menu searchMatch={searchMatch}/>}
+                {activeComponent === 'menu' && <Menu searchMatch={searchMatch} logout={logout}/>}
                 {activeComponent === 'matchmaking' && <MatchMaking/>}
                 {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
