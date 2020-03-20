@@ -31,7 +31,8 @@ const App: React.FC = () => {
             setActiveComponent('auth');
         });
         socket.on('UPDATE_TOKEN', (data: any) => {
-            window.$name = data.userName;
+            window.$name = data.user.name;
+            window.$user = data.user;
             localStorage.setItem('token', data.token);
             setActiveComponent('menu');
         });

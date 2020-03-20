@@ -48,7 +48,7 @@ export const addUser = async (_name, socketId) => {
 
         clientSocketMap.set(name, socketId);
         socketClientMap.set(socketId, name);
-        io.to(socketId).emit('UPDATE_TOKEN', {token: newUser.token, userName: name});
+        io.to(socketId).emit('UPDATE_TOKEN', {token: newUser.token, user: user});
     } catch (err) {
         logError(err, 'userC', 'addUser');
         sendErrorToSocket(err, socketId);
@@ -81,7 +81,7 @@ export const login = async (userName, password, socketId) => {
         if (!valid)
             return sendErrorToSocket('Invalid Password', socketId);
 
-        io.to(socketId).emit('UPDATE_TOKEN', {token: user.token, userName: user.name});
+        io.to(socketId).emit('UPDATE_TOKEN', {token: user.token, user: user});
     } catch (err) {
         logError(err, 'userC', 'login');
         sendErrorToSocket(err, socketId);
