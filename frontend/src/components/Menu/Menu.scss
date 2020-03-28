@@ -1,0 +1,56 @@
+.menu {
+  width: 100vw;
+  height: 100vh;
+
+  &-play-button {
+    width: 200px;
+    font-size: 20px;
+    height: 50px;
+    line-height: 50px;
+  }
+
+  &-settings-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 80px;
+  }
+
+  &-logout-button {
+    position: absolute;
+    bottom: 20px;
+    right: 120px;
+    width: 80px;
+  }
+
+}
+
+.settings {
+  position: fixed;
+  right: 0;
+  width: 300px;
+  padding: 20px;
+  height: calc(100vh - 40px);
+  background: rgba(0, 0, 0, 0.1);
+
+  &-button {
+    margin: 10px 0;
+    width: 146px;
+  }
+
+}
+
+.password-hint {
+  background-color: rgba(255, 0, 0, 0.5);
+  position: fixed;
+  font-weight: bold;
+  font-size: 24px;
+  left: 50vw;
+  bottom: 20px;
+  width: 300px;
+  padding: 20px;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}

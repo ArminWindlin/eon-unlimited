@@ -11,7 +11,7 @@ export const sendError = (message, userName) => {
 };
 
 export const sendErrorToSocket = (message, socketId) => {
-    io.to(socketId).emit('ERROR', message);
+    io.to(socketId).emit('ERROR', String(message));
 };
 
 const errorLog = winston.createLogger({

@@ -3,12 +3,15 @@ import {socket} from './utility/socket';
 import PlayGround from './components/PlayGround/PlayGround';
 import Auth from './components/Authentication/Auth';
 import MatchMaking from './components/MatchMaking/MatchMaking';
+import Menu from './components/Menu/Menu';
+import Notification from './components/Various/Notification';
 
 const App: React.FC = () => {
 
     /*
     * auth
     * loading
+    * menu
     * matchmaking
     * play
     */
@@ -19,17 +22,19 @@ const App: React.FC = () => {
         const token = localStorage.getItem('token') || null;
         if (token) socket.emit('CONNECT_USER', token);
         else setActiveComponent('auth');
-        socket.on('CONNECT_SUCCESS', (data: string) => {
-            window.$name = data;
-            setActiveComponent('matchmaking');
+        socket.on('CONNECT_SUCCESS', (data: any) => {
+            window.$name = data.name;
+            window.$user = data;
+            setActiveComponent('menu');
         });
         socket.on('CONNECT_ERROR', () => {
             setActiveComponent('auth');
         });
         socket.on('UPDATE_TOKEN', (data: any) => {
-            window.$name = data.userName;
+            window.$name = data.user.name;
+            window.$user = data.user;
             localStorage.setItem('token', data.token);
-            setActiveComponent('matchmaking');
+            setActiveComponent('menu');
         });
         window.$socket.on('MATCH_FOUND', (data: any) => {
             console.log('Match ID: ' + data.matchId);
@@ -38,12 +43,23 @@ const App: React.FC = () => {
         });
     }, []);
 
+    const searchMatch = () => {
+        setActiveComponent('matchmaking');
+    };
+
+    const logout = async () => {
+        setActiveComponent('auth');
+    };
+
     return (
-        <div className="app">
-            {activeComponent === 'auth' && <Auth/>}
-            {activeComponent === 'matchmaking' && <MatchMaking/>}
-            {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
-        </div>
+            <div className="app">
+                {activeComponent === 'auth' && <Auth/>}
+                {activeComponent === 'menu' && <Menu searchMatch={searchMatch} logout={logout}/>}
+                {activeComponent === 'matchmaking' && <MatchMaking/>}
+                {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
+                {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
+                <Notification/>
+            </div>
     );
 };
 
@@ -53,6 +69,7 @@ export default App;
 declare global {
     interface Window {
         $socket: any,
-        $name: string
+        $name: string,
+        $user: any
     }
 }

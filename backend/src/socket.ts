@@ -2,7 +2,7 @@ import * as socketio from 'socket.io';
 import * as matchC from './controller/matchC';
 import {User} from './model/user';
 import {sendErrorToSocket} from './util/error';
-import {addUser} from './controller/userC';
+import * as userC from './controller/userC';
 
 export let io;
 export const clientSocketMap = new Map();
@@ -16,7 +16,11 @@ export function setupWebSockets(server) {
 
         // AUTHENTICATION
         socket.on('REGISTER', async function(data) {
-            addUser(data, socket.id);
+            userC.addUser(data, socket.id);
+        });
+
+        socket.on('LOGIN', async function(data) {
+            userC.login(data.userName, data.password, socket.id);
         });
 
         socket.on('CONNECT_USER', async function(data) {
@@ -29,7 +33,11 @@ export function setupWebSockets(server) {
             let userName = userR.toObject().name;
             clientSocketMap.set(userName, socket.id);
             socketClientMap.set(socket.id, userName);
-            socket.emit('CONNECT_SUCCESS', userName);
+            socket.emit('CONNECT_SUCCESS', userR.toObject());
+        });
+
+        socket.on('PUT_PASSWORD', (data) => {
+            userC.updatePassword(socketClientMap.get(socket.id), data, socket.id);
         });
 
         socket.on('disconnect', () => {
