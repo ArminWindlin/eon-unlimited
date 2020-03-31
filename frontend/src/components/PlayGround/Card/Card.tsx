@@ -12,7 +12,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({card, draggable = true}) => {
 
     const [{isDragging}, drag] = useDrag({
-        item: {name: card.title, type: ItemTypes.CARD},
+        item: {name: card.name, type: ItemTypes.CARD},
         end: (item: { name: string } | undefined, monitor: DragSourceMonitor) => {
             const dropResult = monitor.getDropResult();
             if (item && dropResult) {
@@ -39,7 +39,7 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
     return (
             <div className={'card' + (card.selected ? ' selected' : '')} ref={dragRef} style={opacityStyle}
                  onClick={selectCard}>
-                <div className="card-title">{card.title}</div>
+                <div className="card-title">{card.name} ({card.rarity})</div>
                 <div className="card-stat card-health">{card.health}</div>
                 <div className="card-stat card-defense">{card.defense}</div>
                 <div className="card-stat card-offense">{card.offense}</div>

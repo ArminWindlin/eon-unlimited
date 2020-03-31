@@ -23,13 +23,23 @@ export const getRandomCard = (index = -1, side = 1) => {
         'Dungo',
         'Giant Tree',
     ];
+    let rarity;
+    const randomRarity = Math.random();
+    if (randomRarity < 0.1) rarity = 'legendary';
+    else if (randomRarity < 0.25) rarity = 'epic';
+    else if (randomRarity < 0.5) rarity = 'rare';
+    else rarity = 'common';
+    const stats = getRandomStats(rarity);
     let card: Card = {
-        id: Math.floor(Math.random() * 10000),
-        title: names[Math.floor(Math.random() * names.length)],
-        offense: Math.floor(Math.random() * 10 + 10),
-        defense: Math.floor(Math.random() * 10),
-        health: Math.floor(Math.random() * 20 + 1),
-        mana: Math.floor(Math.random() * 10 + 5),
+        id: '' + Math.floor(Math.random() * 10000),
+        name: names[Math.floor(Math.random() * names.length)],
+        mana: stats.mana,
+        offense: stats.offense,
+        defense: stats.defense,
+        health: stats.health,
+        type: 'unit',
+        rarity: rarity,
+        class: 'neutral',
         selected: false,
         index: index,
         place: 'hand',
@@ -37,3 +47,60 @@ export const getRandomCard = (index = -1, side = 1) => {
     };
     return card;
 };
+
+// Returns random stats according to stat-strength-formula
+// To use separately take file eon-unlimited/utility/statsGenerator.js
+function getRandomStats(rarity) {
+    let manaAverage;
+    let strength;
+    switch (rarity) {
+        case 'common':
+            strength = 2;
+            manaAverage = 3;
+            break;
+        case 'rare':
+            strength = 2.5;
+            manaAverage = 6;
+            break;
+        case 'epic':
+            strength = 3;
+            manaAverage = 10;
+            break;
+        case 'legendary':
+            strength = 4;
+            manaAverage = 15;
+            break;
+        default:
+            throw Error('invalid rarity');
+    }
+    let mana;
+    do {
+        mana = Math.round(normalDistribution(manaAverage));
+    } while (mana >= 20);
+    const denom = strength * mana;
+    let off;
+    do {
+        off = Math.round(normalDistribution(denom * 0.4));
+    } while (off * 1.5 >= denom);
+    let def;
+    do {
+        def = Math.round(normalDistribution(off * 0.5));
+    } while (off + def >= denom || def > off);
+    const health = Math.round((denom - off - def) * 2);
+    return {
+        mana: mana,
+        offense: off,
+        defense: def,
+        health: health,
+    };
+}
+
+function normalDistribution(value) {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    num = num / 10.0 + 0.5;
+    if (num > 1 || num < 0) return normalDistribution(value);
+    return num * 2 * value;
+}

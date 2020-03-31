@@ -1,11 +1,15 @@
 export default interface CardType {
-    id: number,
-    title: string,
+    id: string,
+    name: string,
     // stats
     offense: number,
     defense: number,
     health: number,
     mana: number,
+    // classification
+    type: string,
+    rarity: string,
+    class: string,
     // usability
     selected: boolean,
     index: number,
