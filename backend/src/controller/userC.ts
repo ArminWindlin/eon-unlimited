@@ -3,6 +3,7 @@ import {logError, sendErrorToSocket} from '../util/error';
 import * as TokenGenerator from 'uuid-token-generator';
 import * as pass from 'bcrypt';
 import {clientSocketMap, io, socketClientMap} from '../socket';
+import Match from '../classes/Match';
 
 const tokgen = new TokenGenerator(512, TokenGenerator.BASE62);
 const saltRounds = 10;
@@ -97,5 +98,23 @@ export const joinMatch = (userName, matchId) => {
 export const leaveMatch = (userName) => {
     User.updateOne({name: userName}, {isInMatch: false}, (err) => {
         if (err) logError(err, 'userC', 'leaveMatch');
+    });
+};
+
+export const joinBotMatch = (userName) => {
+    User.updateOne({name: userName}, {activeBotMatch: true}, (err) => {
+        if (err) logError(err, 'userC', 'joinBotMatch');
+    });
+};
+
+export const leaveBotMatch = (userName) => {
+    User.updateOne({name: userName}, {activeBotMatch: false}, (err) => {
+        if (err) logError(err, 'userC', 'leaveBotMatch');
+    });
+};
+
+export const saveBotMatch = (userName, match: Match) => {
+    User.updateOne({name: userName}, {botGameState: match}, (err) => {
+        if (err) logError(err, 'userC', 'saveBotMatch');
     });
 };

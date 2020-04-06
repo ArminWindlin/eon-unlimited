@@ -38,7 +38,14 @@ const UserSchema: Schema = new Schema({
     matchId: {
         type: Number,
         default: -1,
-    }
+    },
+    activeBotMatch: {
+        type: Boolean,
+        default: false,
+    },
+    botGameState: {
+        type: Object,
+    },
 });
 
 // Export schema for user collection

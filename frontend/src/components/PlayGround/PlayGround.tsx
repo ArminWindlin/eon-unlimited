@@ -54,9 +54,18 @@ const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
 
     const handleKeyDown = (e: any) => {
         if (e.code === 'Escape') {
-            if (isBotMatch) toMenu();
-            else setInGameMenu(true);
+            setInGameMenu(true);
         }
+    };
+
+    const pause = () => {
+        window.$socket.emit('MATCH_SURRENDER');
+        toMenu();
+    };
+
+    const endBotMatch = () => {
+        window.$socket.emit('MATCH_SURRENDER_BOT');
+        toMenu();
     };
 
     return (
@@ -78,7 +87,9 @@ const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
                     <EnemyMana/>
                     {gameOverMessage !== '' && <GameOver message={gameOverMessage}/>}
                     {inGameMenu && <InGameMenu close={() => setInGameMenu(false)}
-                                               surrender={surrender}/>}
+                                               surrender={endBotMatch}
+                                               pause={pause}
+                                               isBotMatch={isBotMatch}/>}
                 </DndProvider>
             </div>
     );

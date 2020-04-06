@@ -66,12 +66,19 @@ export function setupWebSockets(server) {
         socket.on('MATCH_SEARCH', () => {
             matchC.startMatch(socket.id);
         });
+
         socket.on('MATCH_SEARCH_BOT', () => {
-            matchC.startMatch(socket.id, true);
+            matchC.startBotMatch(socket.id);
         });
+
         socket.on('MATCH_SURRENDER', () => {
             matchC.surrender(socket.id);
         });
+
+        socket.on('MATCH_SURRENDER_BOT', () => {
+            matchC.surrender(socket.id, true);
+        });
+
 
         // ACTIONS
         socket.on('ACTION_DRAW', () => {
