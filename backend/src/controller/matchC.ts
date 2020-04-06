@@ -2,8 +2,10 @@ import {getRandomCard} from '../util/cardFunctions';
 import {io, socketClientMap, socketGameMap} from '../socket';
 import Player from '../classes/Player';
 import Match from '../classes/Match';
+import {addBot, removeBot} from './botC';
+import {logError} from '../util/error';
 
-export const runningMatches: Match[] = [];
+export const runningMatches: Map<number, Match> = new Map();
 let currentMatchId = 0;
 let playerWaiting = false;
 
@@ -11,15 +13,24 @@ let playerWaiting = false;
 const MAX_ACTIONS = 10;
 const MAX_MANA = 20;
 
-export const startMatch = (socketId) => {
+export const startMatch = (socketId, withBot = false) => {
     const name = socketClientMap.get(socketId);
-    if (!playerWaiting || runningMatches[currentMatchId].closed) {
-        runningMatches[++currentMatchId] = new Match(new Player(socketId, name));
+    if (!playerWaiting || !runningMatches.has(currentMatchId) || withBot) {
+        const matchId = ++currentMatchId;
+        runningMatches.set(matchId, new Match(new Player(socketId, name), matchId));
         playerWaiting = true;
         if (socketGameMap.has(socketId)) socketGameMap.delete(socketId);
         socketGameMap.set(socketId, currentMatchId);
+        if (withBot) {
+            playerWaiting = false;
+            const match = runningMatches.get(matchId);
+            const bot = addBot(matchId);
+            socketGameMap.set(bot.socketId, matchId);
+            match.setPlayer2(bot, true);
+            io.to(socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: bot.name});
+        }
     } else {
-        let match = runningMatches[currentMatchId];
+        const match = runningMatches.get(currentMatchId);
         match.setPlayer2(new Player(socketId, name));
         playerWaiting = false;
         if (socketGameMap.has(socketId)) socketGameMap.delete(socketId);
@@ -33,15 +44,18 @@ export const startMatch = (socketId) => {
 export const disconnect = (socketId) => {
     const matchId = socketGameMap.get(socketId);
     if (!matchId) return;
-    const match = runningMatches[matchId];
-    match.closed = true;
+    if (!runningMatches.has(matchId)) return;
+    const match = runningMatches.get(matchId);
     const opponent = match.getPlayer(getOpponentSide(match.getSideBySocket(socketId)));
     if (opponent)
         io.to(opponent.socketId).emit('MATCH_OVER', 'VICTORY (opponent disconnected)');
+    if (match.botMatch) removeBot(match.player2.socketId);
+    runningMatches.delete(matchId);
 };
 
 export const drawCard = (socketId) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    if (!match) return;
     if (!match.getPlayer(getOpponentSide(side)))
         return io.to(socketId).emit('SHOW_HINT', 'Wait for opponent');
     if (!changeActions(match, side, -1)) return;
@@ -56,10 +70,12 @@ export const drawCard = (socketId) => {
 
 export const playCard = (socketId, cardIndex) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    if (!match) return;
     if (!changeActions(match, side, -1)) return;
     const player: Player = match.getPlayer(side);
     let hand = player.hand;
     let board = player.board;
+    if (hand.length < cardIndex + 1) return;
     let card = hand[cardIndex];
 
     if (board.length > 3)
@@ -83,11 +99,13 @@ export const playCard = (socketId, cardIndex) => {
 
 export const selectCard = (socketId, cardIndex, cardSide) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    if (!match) return;
     const player: Player = match.getPlayer(side);
     let board = player.board;
     let selectedCard = player.selectedCard;
     let opponentSide = getOpponentSide(side);
     if (cardSide === side) {
+        if (board.length < cardIndex + 1) return;
         // deselect previous select
         if (selectedCard > -1) board[selectedCard].selected = false;
         // select
@@ -101,8 +119,10 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
         // run attack
         if (!changeActions(match, side, -1)) return;
         let opponentBoard = match.getPlayer(getOpponentSide(side)).board;
+        if (opponentBoard.length < cardIndex + 1) return;
         let card1 = board[selectedCard];
         let card2 = opponentBoard[cardIndex];
+        if (!card1 || !card2) return;
         card2.health -= card1.offense;
         card1.health -= card2.defense;
         if (card2.health <= 0) {
@@ -121,6 +141,7 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
 
 export const attackPlayer = (socketId) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    if (!match) return;
     if (!changeActions(match, side, -4)) return;
     const player: Player = match.getPlayer(side);
     let selectedCard = player.selectedCard;
@@ -134,6 +155,7 @@ export const attackPlayer = (socketId) => {
 
 export const sendMessage = (socketId, message) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    if (!match) return;
     let player = match.getPlayer(side);
     let opponent = match.getPlayer(getOpponentSide(side));
     io.to(opponent.socketId).emit('UPDATE_GAME_CHAT', {text: message, sender: player.name});
@@ -176,12 +198,18 @@ const changeLife = (match, side, amount) => {
     if (life <= 0) {
         io.to(player.socketId).emit('MATCH_OVER', 'DEFEAT');
         io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('MATCH_OVER', 'VICTORY');
+        if (match.botMatch) removeBot(match.player2.socketId);
+        runningMatches.delete(match.matchId);
     }
 };
 
 const getMatchAndSide = (socketId): [Match, number] => {
     const matchId = socketGameMap.get(socketId);
-    const match = runningMatches[matchId];
+    if (!runningMatches.has(matchId)) {
+        logError(Error(`No match with matchId ${matchId}`), 'matchC', 'getMatchAndSide');
+        return [null, -1];
+    }
+    const match = runningMatches.get(matchId);
     const side = match.getSideBySocket(socketId);
     return [match, side];
 };
@@ -212,7 +240,7 @@ setInterval(() => {
             changeActions(m, 2, 1);
         }
     });
-}, 1000 * 5);
+}, 1000 * 3);
 
 setInterval(() => {
     runningMatches.forEach(m => {
@@ -221,4 +249,4 @@ setInterval(() => {
             changeMana(m, 2, 1);
         }
     });
-}, 1000 * 8);
+}, 1000 * 7);
