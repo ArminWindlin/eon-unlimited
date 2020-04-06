@@ -56,6 +56,11 @@ const App: React.FC = () => {
         window.$socket.emit('MATCH_SEARCH_BOT');
     };
 
+    const surrenderMatch = () => {
+        window.$socket.emit('MATCH_SURRENDER');
+        window.location.reload();
+    };
+
     const logout = async () => {
         setActiveComponent('auth');
     };
@@ -70,7 +75,7 @@ const App: React.FC = () => {
                 {activeComponent === 'menu' &&
                 <Menu searchMatch={searchMatch} logout={logout} startTestMatch={startTestMatch}/>}
                 {activeComponent === 'matchmaking' && <MatchMaking toMenu={toMenu}/>}
-                {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
+                {activeComponent === 'play' && <PlayGround opponent={opponent} surrender={surrenderMatch}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
                 <Notification/>
             </div>

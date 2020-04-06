@@ -15,22 +15,35 @@ import Chat from './Chat/Chat';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import './PlayGround.scss';
+import InGameMenu from './Displays/InGameMenu';
 
 interface IPlayGround {
-    opponent: string
+    opponent: string,
+    surrender: () => void
 }
 
-const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
+const PlayGround: React.FC<IPlayGround> = ({opponent, surrender}) => {
 
     const [gameOverMessage, setGameOverMessage] = useState('');
+    const [inGameMenu, setInGameMenu] = useState(false);
+
+    // on create
+    if (!opponent) window.$socket.emit('GET_MATCH');
 
     useEffect(() => {
         window.$socket.on('MATCH_OVER', (data: string) => {
             setGameOverMessage(data);
         });
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            delete window.$socket._callbacks['$MATCH_OVER'];
+        };
     }, []);
 
-    if (!opponent) window.$socket.emit('GET_MATCH');
+    const handleKeyDown = (e: any) => {
+        if (e.code === 'Escape') setInGameMenu(true);
+    };
 
     return (
             <div className="playground">
@@ -50,6 +63,8 @@ const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
                     <Mana/>
                     <EnemyMana/>
                     {gameOverMessage !== '' && <GameOver message={gameOverMessage}/>}
+                    {inGameMenu && <InGameMenu close={() => setInGameMenu(false)}
+                                               surrender={surrender}/>}
                 </DndProvider>
             </div>
     );

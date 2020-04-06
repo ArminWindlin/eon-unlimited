@@ -12,13 +12,18 @@ const MatchMaking: React.FC<IMatchMaking> = ({toMenu}) => {
     }, []);
 
     useEffect(() => {
-        window.addEventListener('keydown', e => {
-            if (e.code === 'Escape') {
-                window.$socket.emit('MATCH_SURRENDER');
-                toMenu();
-            }
-        });
-    }, [toMenu]);
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    });
+
+    const handleKeyDown = (e: any) => {
+        if (e.code === 'Escape') {
+            window.$socket.emit('MATCH_SURRENDER');
+            toMenu();
+        }
+    };
 
     return (
             <div className="match-making">
