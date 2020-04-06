@@ -30,6 +30,14 @@ const UserSchema: Schema = new Schema({
     passwordSet: {
         type: Boolean,
         default: false,
+    },
+    isInMatch: {
+        type: Boolean,
+        default: false,
+    },
+    matchId: {
+        type: Number,
+        default: -1,
     }
 });
 

@@ -24,16 +24,25 @@ export function setupWebSockets(server) {
         });
 
         socket.on('CONNECT_USER', async function(data) {
-            let userR = await User.findOne({token: data});
+            const userR = await User.findOne({token: data});
             if (userR === null) {
                 socket.emit('CONNECT_ERROR');
                 sendErrorToSocket('socket connection error: invalid token', socket.id);
                 return;
             }
-            let userName = userR.toObject().name;
+            const user = userR.toObject();
+            const userName = user.name;
             clientSocketMap.set(userName, socket.id);
             socketClientMap.set(socket.id, userName);
-            socket.emit('CONNECT_SUCCESS', userR.toObject());
+            socket.emit('CONNECT_SUCCESS', user);
+            if (user.isInMatch) {
+                if (matchC.reconnect(socket.id, userName, user.matchId)) {
+                    socket.emit('CONNECT_SUCCESS_RECONNECT', user);
+                } else {
+                    userC.leaveMatch(userName);
+                    socket.emit('CONNECT_SUCCESS', user);
+                }
+            } else socket.emit('CONNECT_SUCCESS', user);
         });
 
         socket.on('PUT_PASSWORD', (data) => {
@@ -74,9 +83,13 @@ export function setupWebSockets(server) {
             matchC.attackPlayer(socket.id);
         });
 
-        // OTHER
         socket.on('SELECT_CARD', (data) => {
             matchC.selectCard(socket.id, data.index, data.side);
+        });
+
+        // GET
+        socket.on('GET_MATCH', () => {
+            matchC.sendMatchData(socket.id);
         });
 
     });

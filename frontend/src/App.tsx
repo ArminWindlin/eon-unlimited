@@ -27,6 +27,11 @@ const App: React.FC = () => {
             window.$user = data;
             setActiveComponent('menu');
         });
+        socket.on('CONNECT_SUCCESS_RECONNECT', (data: any) => {
+            window.$name = data.name;
+            window.$user = data;
+            setActiveComponent('play');
+        });
         socket.on('CONNECT_ERROR', () => {
             setActiveComponent('auth');
         });

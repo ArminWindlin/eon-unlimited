@@ -88,3 +88,14 @@ export const login = async (userName, password, socketId) => {
     }
 };
 
+export const joinMatch = (userName, matchId) => {
+    User.updateOne({name: userName}, {matchId: matchId, isInMatch: true}, (err) => {
+        if (err) logError(err, 'userC', 'joinMatch');
+    });
+};
+
+export const leaveMatch = (userName) => {
+    User.updateOne({name: userName}, {isInMatch: false}, (err) => {
+        if (err) logError(err, 'userC', 'leaveMatch');
+    });
+};
