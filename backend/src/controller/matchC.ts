@@ -44,6 +44,7 @@ export const startMatch = (socketId, withBot = false) => {
 export const disconnect = (socketId) => {
     const matchId = socketGameMap.get(socketId);
     if (!matchId) return;
+    if (!runningMatches.has(matchId)) return;
     const match = runningMatches.get(matchId);
     const opponent = match.getPlayer(getOpponentSide(match.getSideBySocket(socketId)));
     if (opponent)
@@ -121,6 +122,7 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
         if (opponentBoard.length < cardIndex + 1) return;
         let card1 = board[selectedCard];
         let card2 = opponentBoard[cardIndex];
+        if (!card1 || !card2) return;
         card2.health -= card1.offense;
         card1.health -= card2.defense;
         if (card2.health <= 0) {
@@ -204,7 +206,7 @@ const changeLife = (match, side, amount) => {
 const getMatchAndSide = (socketId): [Match, number] => {
     const matchId = socketGameMap.get(socketId);
     if (!runningMatches.has(matchId)) {
-        logError(Error('No match with matchId'), 'matchC', 'getMatchAndSide');
+        logError(Error(`No match with matchId ${matchId}`), 'matchC', 'getMatchAndSide');
         return [null, -1];
     }
     const match = runningMatches.get(matchId);
@@ -238,7 +240,7 @@ setInterval(() => {
             changeActions(m, 2, 1);
         }
     });
-}, 1000 * 5);
+}, 1000 * 3);
 
 setInterval(() => {
     runningMatches.forEach(m => {

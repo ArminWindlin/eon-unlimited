@@ -25,9 +25,9 @@ export const getRandomCard = (index = -1, side = 1) => {
     ];
     let rarity;
     const randomRarity = Math.random();
-    if (randomRarity < 0.1) rarity = 'legendary';
-    else if (randomRarity < 0.25) rarity = 'epic';
-    else if (randomRarity < 0.5) rarity = 'rare';
+    if (randomRarity < 0.08) rarity = 'legendary';
+    else if (randomRarity < 0.2) rarity = 'epic';
+    else if (randomRarity < 0.4) rarity = 'rare';
     else rarity = 'common';
     const stats = getRandomStats(rarity);
     let card: Card = {

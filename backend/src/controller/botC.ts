@@ -17,19 +17,32 @@ export const removeBot = (botID) => {
 
 setInterval(() => {
     bots.forEach(b => {
-        const random = Math.random();
         const match = matchC.runningMatches.get(b.matchId);
         if (!match)
             return logError(Error('Match not found'), 'botC', 'setInterval');
-        if (random < 0.3)
+        const hand = match.player2.hand;
+        const board = match.player2.board;
+        if (hand.length === 0 && board.length === 0)
             matchC.drawCard(b.socketId);
-        else if (random < 0.7)
+        else if (board.length === 0) {
             matchC.playCard(b.socketId, 0);
-        else {
-            matchC.selectCard(b.socketId, 0, 2);
-            setTimeout(() => {
-                matchC.selectCard(b.socketId, 0, 1);
-            }, 1000);
+        } else {
+            const random = Math.random();
+            if (random < 0.2)
+                matchC.drawCard(b.socketId);
+            else if (random < 0.4)
+                matchC.playCard(b.socketId, 0);
+            else if (random < 0.7) {
+                matchC.selectCard(b.socketId, 0, 2);
+                setTimeout(() => {
+                    matchC.selectCard(b.socketId, 0, 1);
+                }, 1000);
+            } else {
+                matchC.selectCard(b.socketId, 0, 2);
+                setTimeout(() => {
+                    matchC.attackPlayer(b.socketId);
+                }, 1000);
+            }
         }
     });
-}, 1000 * 5);
+}, 1000 * 3);
