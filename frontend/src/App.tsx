@@ -47,6 +47,10 @@ const App: React.FC = () => {
         setActiveComponent('matchmaking');
     };
 
+    const startTestMatch = () => {
+        window.$socket.emit('MATCH_SEARCH_BOT');
+    };
+
     const logout = async () => {
         setActiveComponent('auth');
     };
@@ -54,7 +58,8 @@ const App: React.FC = () => {
     return (
             <div className="app">
                 {activeComponent === 'auth' && <Auth/>}
-                {activeComponent === 'menu' && <Menu searchMatch={searchMatch} logout={logout}/>}
+                {activeComponent === 'menu' &&
+                <Menu searchMatch={searchMatch} logout={logout} startTestMatch={startTestMatch}/>}
                 {activeComponent === 'matchmaking' && <MatchMaking/>}
                 {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}

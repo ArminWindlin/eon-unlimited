@@ -5,10 +5,11 @@ import PasswordHint from './PasswordHint';
 
 interface IMenu {
     searchMatch: () => void,
-    logout: () => void
+    logout: () => void,
+    startTestMatch: () => void,
 }
 
-const Menu: React.FC<IMenu> = ({searchMatch, logout}) => {
+const Menu: React.FC<IMenu> = ({searchMatch, logout, startTestMatch}) => {
 
     const [displayPasswordHint, setDisplayPasswordHint] = useState(false);
 
@@ -29,8 +30,9 @@ const Menu: React.FC<IMenu> = ({searchMatch, logout}) => {
     };
 
     return (
-            <div className="menu flex ai-c jc-c">
+            <div className="menu flex column ai-c jc-c">
                 <div className="button menu-play-button" onClick={searchMatch}>PLAY</div>
+                <div className="button menu-play-button" onClick={startTestMatch}>TEST</div>
                 {settingsOpened && <Settings/>}
                 <div className="button menu-settings-button" onClick={toggleSettings}>
                     {settingsOpened ? 'Close' : 'Settings'}

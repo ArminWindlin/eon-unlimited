@@ -1,4 +1,4 @@
-import { disconnect, getOpponentSide, runningMatches, startMatch } from './matchC';
+import {disconnect, getOpponentSide, runningMatches, startMatch} from './matchC';
 
 describe('Match Controller', () => {
     beforeAll(() => {
@@ -6,20 +6,17 @@ describe('Match Controller', () => {
     });
 
     it('starts a match', () => {
-        expect(runningMatches.length).toBe(0);
-        startMatch(123);
-        expect(runningMatches.length).toBe(1);
-        expect(runningMatches[0].started).toBe(true);
+        startMatch(123, true);
+        expect(runningMatches.get(123).started).toBe(true);
     });
 
     it('closes a match', () => {
-        expect(runningMatches[0].closed).toBe(false);
         disconnect(123);
-        expect(runningMatches[0].closed).toBe(true);
+        expect(runningMatches.has(123)).toBe(false);
     });
 
     it('retrieves correct opponent side', () => {
         expect(getOpponentSide(1)).toBe(2);
         expect(getOpponentSide(2)).toBe(1);
-    })
+    });
 });
