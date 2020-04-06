@@ -7,13 +7,10 @@ export default class Match {
     started: boolean;
     botMatch: boolean;
 
-    constructor(player: Player, matchId, copyMatch = null) {
+    constructor(player: Player, matchId) {
         this.player1 = player;
         this.started = false;
         this.id = matchId;
-        if (copyMatch) {
-
-        }
     }
 
     setPlayer2(player: Player, isBot = false) {
