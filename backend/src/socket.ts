@@ -69,6 +69,9 @@ export function setupWebSockets(server) {
         socket.on('MATCH_SEARCH_BOT', () => {
             matchC.startMatch(socket.id, true);
         });
+        socket.on('MATCH_SURRENDER', () => {
+            matchC.surrender(socket.id);
+        });
 
         // ACTIONS
         socket.on('ACTION_DRAW', () => {

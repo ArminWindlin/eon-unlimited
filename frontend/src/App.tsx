@@ -60,12 +60,16 @@ const App: React.FC = () => {
         setActiveComponent('auth');
     };
 
+    const toMenu = () => {
+        setActiveComponent('menu');
+    };
+
     return (
             <div className="app">
                 {activeComponent === 'auth' && <Auth/>}
                 {activeComponent === 'menu' &&
                 <Menu searchMatch={searchMatch} logout={logout} startTestMatch={startTestMatch}/>}
-                {activeComponent === 'matchmaking' && <MatchMaking/>}
+                {activeComponent === 'matchmaking' && <MatchMaking toMenu={toMenu}/>}
                 {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
                 <Notification/>

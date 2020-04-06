@@ -25,11 +25,12 @@ const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
     const [gameOverMessage, setGameOverMessage] = useState('');
 
     useEffect(() => {
-        window.$socket.emit('GET_MATCH');
         window.$socket.on('MATCH_OVER', (data: string) => {
             setGameOverMessage(data);
         });
     }, []);
+
+    if (!opponent) window.$socket.emit('GET_MATCH');
 
     return (
             <div className="playground">
