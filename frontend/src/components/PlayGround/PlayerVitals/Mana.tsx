@@ -9,6 +9,9 @@ const Mana: React.FC = () => {
         window.$socket.on('UPDATE_MANA', (data: number) => {
             setMana(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_MANA'];
+        };
     }, []);
 
     return (

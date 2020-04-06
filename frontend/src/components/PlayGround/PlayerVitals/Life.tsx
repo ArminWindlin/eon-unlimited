@@ -9,6 +9,9 @@ const Life: React.FC = () => {
         window.$socket.on('UPDATE_LIFE', (data: number) => {
             setLife(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_LIFE'];
+        };
     }, []);
 
     return (

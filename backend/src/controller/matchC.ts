@@ -28,7 +28,7 @@ export const startMatch = (socketId, withBot = false) => {
             const bot = addBot(matchId);
             socketGameMap.set(bot.socketId, matchId);
             match.setPlayer2(bot, true);
-            io.to(socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: bot.name});
+            io.to(socketId).emit('MATCH_FOUND');
         }
     } else {
         const match = runningMatches.get(currentMatchId);
@@ -203,7 +203,7 @@ export const sendMatchData = (socketId) => {
     io.to(socketId).emit('UPDATE_ENEMY_MANA', opponent.mana);
     io.to(socketId).emit('UPDATE_ACTIONS', player.actions);
     io.to(socketId).emit('UPDATE_ENEMY_ACTIONS', opponent.actions);
-    io.to(socketId).emit('MATCH_FOUND', {matchId: match.id, opponent: opponent.name});
+    io.to(socketId).emit('UPDATE_MATCH', {matchId: match.id, opponent: opponent.name, isBotMatch: match.botMatch});
 };
 
 const changeActions = (match: Match, side, amount) => {

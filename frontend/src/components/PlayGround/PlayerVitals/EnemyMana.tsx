@@ -9,6 +9,9 @@ const EnemyMana: React.FC = () => {
         window.$socket.on('UPDATE_ENEMY_MANA', (data: number) => {
             setMana(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_ENEMY_MANA'];
+        };
     }, []);
 
     return (

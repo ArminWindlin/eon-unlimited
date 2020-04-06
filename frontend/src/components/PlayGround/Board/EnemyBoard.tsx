@@ -11,6 +11,9 @@ const EnemyBoard: React.FC = () => {
         window.$socket.on('UPDATE_ENEMY_BOARD', (data: CardType[]) => {
             setCards(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_ENEMY_BOARD'];
+        };
     }, []);
 
     return (

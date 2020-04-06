@@ -9,6 +9,9 @@ const Actions: React.FC = () => {
         window.$socket.on('UPDATE_ACTIONS', (data: number) => {
             setActions(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_ACTIONS'];
+        };
     }, []);
 
     return (

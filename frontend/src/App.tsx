@@ -16,7 +16,6 @@ const App: React.FC = () => {
     * play
     */
     const [activeComponent, setActiveComponent] = useState('loading');
-    const [opponent, setOpponent] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token') || null;
@@ -41,9 +40,7 @@ const App: React.FC = () => {
             localStorage.setItem('token', data.token);
             setActiveComponent('menu');
         });
-        window.$socket.on('MATCH_FOUND', (data: any) => {
-            console.log('Match ID: ' + data.matchId);
-            setOpponent(data.opponent);
+        window.$socket.on('MATCH_FOUND', () => {
             setActiveComponent('play');
         });
     }, []);
@@ -75,7 +72,7 @@ const App: React.FC = () => {
                 {activeComponent === 'menu' &&
                 <Menu searchMatch={searchMatch} logout={logout} startTestMatch={startTestMatch}/>}
                 {activeComponent === 'matchmaking' && <MatchMaking toMenu={toMenu}/>}
-                {activeComponent === 'play' && <PlayGround opponent={opponent} surrender={surrenderMatch}/>}
+                {activeComponent === 'play' && <PlayGround surrender={surrenderMatch} toMenu={toMenu}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
                 <Notification/>
             </div>

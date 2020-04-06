@@ -22,6 +22,9 @@ const Board: React.FC = () => {
         window.$socket.on('UPDATE_BOARD', (data: CardType[]) => {
             setCards(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_BOARD'];
+        };
     }, []);
 
     const isActive = canDrop && isOver;

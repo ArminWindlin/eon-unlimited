@@ -18,31 +18,45 @@ import './PlayGround.scss';
 import InGameMenu from './Displays/InGameMenu';
 
 interface IPlayGround {
-    opponent: string,
-    surrender: () => void
+    surrender: () => void,
+    toMenu: () => void
 }
 
-const PlayGround: React.FC<IPlayGround> = ({opponent, surrender}) => {
+const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
 
     const [gameOverMessage, setGameOverMessage] = useState('');
     const [inGameMenu, setInGameMenu] = useState(false);
-
-    // on create
-    if (!opponent) window.$socket.emit('GET_MATCH');
+    const [opponent, setOpponent] = useState('');
+    const [isBotMatch, setIsBotMatch] = useState(false);
 
     useEffect(() => {
+        window.$socket.emit('GET_MATCH');
         window.$socket.on('MATCH_OVER', (data: string) => {
             setGameOverMessage(data);
         });
-        window.addEventListener('keydown', handleKeyDown);
+        window.$socket.on('UPDATE_MATCH', (data: any) => {
+            console.log('Match ID: ' + data.matchId);
+            setOpponent(data.opponent);
+            setIsBotMatch(data.isBotMatch);
+        });
         return () => {
-            window.removeEventListener('keydown', handleKeyDown);
             delete window.$socket._callbacks['$MATCH_OVER'];
+            delete window.$socket._callbacks['$UPDATE_MATCH'];
         };
     }, []);
 
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    });
+
     const handleKeyDown = (e: any) => {
-        if (e.code === 'Escape') setInGameMenu(true);
+        if (e.code === 'Escape') {
+            if (isBotMatch) toMenu();
+            else setInGameMenu(true);
+        }
     };
 
     return (

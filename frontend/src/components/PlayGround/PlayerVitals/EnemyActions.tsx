@@ -9,6 +9,9 @@ const EnemyActions: React.FC = () => {
         window.$socket.on('UPDATE_ENEMY_ACTIONS', (data: number) => {
             setActions(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_ENEMY_ACTIONS'];
+        };
     }, []);
 
     return (
