@@ -18,7 +18,7 @@ const MAX_MANA = 20;
 
 export const startMatch = (socketId) => {
     const name = socketClientMap.get(socketId);
-    if (!playerWaiting || !runningMatches.has(currentMatchId)) {
+    if (!playerWaiting || !runningMatches.has(currentMatchId) || runningMatches.get(currentMatchId).started) {
         const matchId = ++currentMatchId;
         runningMatches.set(matchId, new Match(new Player(socketId, name), matchId));
         playerWaiting = true;
