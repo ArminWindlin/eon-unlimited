@@ -16,6 +16,9 @@ const Notification: React.FC = () => {
             setType('info');
             setMessage(data);
             setTimeout(() => setMessage(''), 3000);
+            // update user object after changing password
+            if (data.includes('password'))
+                window.$user.passwordSet = true;
         });
     }, []);
 

@@ -1,16 +1,16 @@
 import Player from './Player';
 
 export default class Match {
+    id: number;
     player1: Player;
     player2: Player;
     started: boolean;
-    matchId: number;
     botMatch: boolean;
 
     constructor(player: Player, matchId) {
         this.player1 = player;
         this.started = false;
-        this.matchId = matchId;
+        this.id = matchId;
     }
 
     setPlayer2(player: Player, isBot = false) {

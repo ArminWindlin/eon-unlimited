@@ -16,7 +16,6 @@ const App: React.FC = () => {
     * play
     */
     const [activeComponent, setActiveComponent] = useState('loading');
-    const [opponent, setOpponent] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token') || null;
@@ -27,6 +26,11 @@ const App: React.FC = () => {
             window.$user = data;
             setActiveComponent('menu');
         });
+        socket.on('CONNECT_SUCCESS_RECONNECT', (data: any) => {
+            window.$name = data.name;
+            window.$user = data;
+            setActiveComponent('play');
+        });
         socket.on('CONNECT_ERROR', () => {
             setActiveComponent('auth');
         });
@@ -36,9 +40,7 @@ const App: React.FC = () => {
             localStorage.setItem('token', data.token);
             setActiveComponent('menu');
         });
-        window.$socket.on('MATCH_FOUND', (data: any) => {
-            console.log('Match ID: ' + data.matchId);
-            setOpponent(data.opponent);
+        window.$socket.on('MATCH_FOUND', () => {
             setActiveComponent('play');
         });
     }, []);
@@ -51,8 +53,17 @@ const App: React.FC = () => {
         window.$socket.emit('MATCH_SEARCH_BOT');
     };
 
+    const surrenderMatch = () => {
+        window.$socket.emit('MATCH_SURRENDER');
+        window.location.reload();
+    };
+
     const logout = async () => {
         setActiveComponent('auth');
+    };
+
+    const toMenu = () => {
+        setActiveComponent('menu');
     };
 
     return (
@@ -60,8 +71,8 @@ const App: React.FC = () => {
                 {activeComponent === 'auth' && <Auth/>}
                 {activeComponent === 'menu' &&
                 <Menu searchMatch={searchMatch} logout={logout} startTestMatch={startTestMatch}/>}
-                {activeComponent === 'matchmaking' && <MatchMaking/>}
-                {activeComponent === 'play' && <PlayGround opponent={opponent}/>}
+                {activeComponent === 'matchmaking' && <MatchMaking toMenu={toMenu}/>}
+                {activeComponent === 'play' && <PlayGround surrender={surrenderMatch} toMenu={toMenu}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
                 <Notification/>
             </div>

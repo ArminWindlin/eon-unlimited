@@ -11,6 +11,9 @@ const Hand: React.FC = () => {
         window.$socket.on('UPDATE_HAND', (data: CardType[]) => {
             setCards(data);
         });
+        return () => {
+            delete window.$socket._callbacks['$UPDATE_HAND'];
+        };
     }, []);
 
     return (

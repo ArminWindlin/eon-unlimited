@@ -15,20 +15,58 @@ import Chat from './Chat/Chat';
 import {DndProvider} from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import './PlayGround.scss';
+import InGameMenu from './Displays/InGameMenu';
 
 interface IPlayGround {
-    opponent: string
+    surrender: () => void,
+    toMenu: () => void
 }
 
-const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
+const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
 
     const [gameOverMessage, setGameOverMessage] = useState('');
+    const [inGameMenu, setInGameMenu] = useState(false);
+    const [opponent, setOpponent] = useState('');
+    const [isBotMatch, setIsBotMatch] = useState(false);
 
     useEffect(() => {
+        window.$socket.emit('GET_MATCH');
         window.$socket.on('MATCH_OVER', (data: string) => {
             setGameOverMessage(data);
         });
+        window.$socket.on('UPDATE_MATCH', (data: any) => {
+            console.log('Match ID: ' + data.matchId);
+            setOpponent(data.opponent);
+            setIsBotMatch(data.isBotMatch);
+        });
+        return () => {
+            delete window.$socket._callbacks['$MATCH_OVER'];
+            delete window.$socket._callbacks['$UPDATE_MATCH'];
+        };
     }, []);
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    });
+
+    const handleKeyDown = (e: any) => {
+        if (e.code === 'Escape') {
+            setInGameMenu(true);
+        }
+    };
+
+    const pause = () => {
+        window.$socket.emit('MATCH_SURRENDER');
+        toMenu();
+    };
+
+    const endBotMatch = () => {
+        window.$socket.emit('MATCH_SURRENDER_BOT');
+        toMenu();
+    };
 
     return (
             <div className="playground">
@@ -48,6 +86,10 @@ const PlayGround: React.FC<IPlayGround> = ({opponent}) => {
                     <Mana/>
                     <EnemyMana/>
                     {gameOverMessage !== '' && <GameOver message={gameOverMessage}/>}
+                    {inGameMenu && <InGameMenu close={() => setInGameMenu(false)}
+                                               surrender={endBotMatch}
+                                               pause={pause}
+                                               isBotMatch={isBotMatch}/>}
                 </DndProvider>
             </div>
     );

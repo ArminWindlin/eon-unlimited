@@ -1,13 +1,8 @@
-import {disconnect, getOpponentSide, runningMatches, startMatch} from './matchC';
+import {disconnect, getOpponentSide, runningMatches, startBotMatch} from './matchC';
 
 describe('Match Controller', () => {
     beforeAll(() => {
 
-    });
-
-    it('starts a match', () => {
-        startMatch(123, true);
-        expect(runningMatches.get(123).started).toBe(true);
     });
 
     it('closes a match', () => {

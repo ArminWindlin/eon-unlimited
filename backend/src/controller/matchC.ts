@@ -4,6 +4,9 @@ import Player from '../classes/Player';
 import Match from '../classes/Match';
 import {addBot, removeBot} from './botC';
 import {logError} from '../util/error';
+import * as userC from './userC';
+import {saveBotMatch} from './userC';
+import {User} from '../model/user';
 
 export const runningMatches: Map<number, Match> = new Map();
 let currentMatchId = 0;
@@ -13,22 +16,14 @@ let playerWaiting = false;
 const MAX_ACTIONS = 10;
 const MAX_MANA = 20;
 
-export const startMatch = (socketId, withBot = false) => {
+export const startMatch = (socketId) => {
     const name = socketClientMap.get(socketId);
-    if (!playerWaiting || !runningMatches.has(currentMatchId) || withBot) {
+    if (!playerWaiting || !runningMatches.has(currentMatchId) || runningMatches.get(currentMatchId).started) {
         const matchId = ++currentMatchId;
         runningMatches.set(matchId, new Match(new Player(socketId, name), matchId));
         playerWaiting = true;
         if (socketGameMap.has(socketId)) socketGameMap.delete(socketId);
-        socketGameMap.set(socketId, currentMatchId);
-        if (withBot) {
-            playerWaiting = false;
-            const match = runningMatches.get(matchId);
-            const bot = addBot(matchId);
-            socketGameMap.set(bot.socketId, matchId);
-            match.setPlayer2(bot, true);
-            io.to(socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: bot.name});
-        }
+        socketGameMap.set(socketId, matchId);
     } else {
         const match = runningMatches.get(currentMatchId);
         match.setPlayer2(new Player(socketId, name));
@@ -38,7 +33,47 @@ export const startMatch = (socketId, withBot = false) => {
         // match can start
         io.to(socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: match.player1.name});
         io.to(match.player1.socketId).emit('MATCH_FOUND', {matchId: currentMatchId, opponent: name});
+        userC.joinMatch(match.player1.name, match.id);
+        userC.joinMatch(name, match.id);
     }
+};
+
+export const startBotMatch = async (socketId) => {
+    const name = socketClientMap.get(socketId);
+    try {
+        const user = (await User.findOne({name: name})).toObject();
+        const matchId = ++currentMatchId;
+        const match: Match = new Match(new Player(socketId, name), matchId);
+        match.setPlayer2(addBot(matchId), true);
+        if (user.activeBotMatch && user.botGameState && user.botGameState.player1) {
+            // recover match
+            const oldMatch = user.botGameState;
+            oldMatch.player1.socketId = socketId;
+            match.player1 = oldMatch.player1;
+            oldMatch.player2.socketId = match.player2.socketId;
+            oldMatch.player2.name = match.player2.name;
+            match.player2 = oldMatch.player2;
+        }
+        runningMatches.set(matchId, match);
+        socketGameMap.set(socketId, matchId);
+        socketGameMap.set(match.player2.socketId, matchId);
+        io.to(socketId).emit('MATCH_FOUND');
+        userC.joinBotMatch(name);
+    } catch (err) {
+        userC.leaveBotMatch(name);
+        logError(err, 'matchC', 'startBotMatch');
+    }
+};
+
+export const reconnect = (socketId, userName, matchId) => {
+    if (!runningMatches.has(matchId)) return false;
+    const match = runningMatches.get(matchId);
+    if (!match) return;
+    socketGameMap.set(socketId, matchId);
+    if (match.player1.name === userName) match.player1.socketId = socketId;
+    else if (match.player2.name === userName) match.player2.socketId = socketId;
+    else return false;
+    return true;
 };
 
 export const disconnect = (socketId) => {
@@ -46,10 +81,26 @@ export const disconnect = (socketId) => {
     if (!matchId) return;
     if (!runningMatches.has(matchId)) return;
     const match = runningMatches.get(matchId);
+    if (!match.started) {
+        runningMatches.delete(matchId);
+    } else if (match.botMatch) {
+        removeBot(match.player2.socketId);
+        runningMatches.delete(matchId);
+    }
+};
+
+export const surrender = (socketId, endBotGame = false) => {
+    const matchId = socketGameMap.get(socketId);
+    if (!matchId) return;
+    if (!runningMatches.has(matchId)) return;
+    const match = runningMatches.get(matchId);
     const opponent = match.getPlayer(getOpponentSide(match.getSideBySocket(socketId)));
     if (opponent)
-        io.to(opponent.socketId).emit('MATCH_OVER', 'VICTORY (opponent disconnected)');
-    if (match.botMatch) removeBot(match.player2.socketId);
+        io.to(opponent.socketId).emit('MATCH_OVER', 'VICTORY (opponent surrendered)');
+    if (match.botMatch) {
+        removeBot(match.player2.socketId);
+        if (endBotGame) userC.leaveBotMatch(socketClientMap.get(socketId));
+    }
     runningMatches.delete(matchId);
 };
 
@@ -66,6 +117,7 @@ export const drawCard = (socketId) => {
     hand.push(getRandomCard(hand.length, side));
     io.to(socketId).emit('UPDATE_HAND', hand);
     changeLife(match, side, -1);
+    if (match.botMatch && side === 1) saveBotMatch(player.name, match);
 };
 
 export const playCard = (socketId, cardIndex) => {
@@ -95,6 +147,7 @@ export const playCard = (socketId, cardIndex) => {
 
     io.to(socketId).emit('UPDATE_HAND', hand);
     sendBoardUpdate(match, side);
+    if (match.botMatch && side === 1) saveBotMatch(player.name, match);
 };
 
 export const selectCard = (socketId, cardIndex, cardSide) => {
@@ -147,6 +200,7 @@ export const attackPlayer = (socketId) => {
     let selectedCard = player.selectedCard;
     if (selectedCard === -1)
         return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
+    if (!player.board[selectedCard]) return;
     changeLife(match, getOpponentSide(side), -player.board[selectedCard].offense);
     player.board[selectedCard].selected = false;
     player.selectedCard = -1;
@@ -159,6 +213,23 @@ export const sendMessage = (socketId, message) => {
     let player = match.getPlayer(side);
     let opponent = match.getPlayer(getOpponentSide(side));
     io.to(opponent.socketId).emit('UPDATE_GAME_CHAT', {text: message, sender: player.name});
+};
+
+export const sendMatchData = (socketId) => {
+    const [match, side]: [Match, number] = getMatchAndSide(socketId);
+    if (!match) return;
+    const player = match.getPlayer(side);
+    const opponent = match.getPlayer(getOpponentSide(side));
+    io.to(socketId).emit('UPDATE_HAND', player.hand);
+    io.to(socketId).emit('UPDATE_BOARD', player.board);
+    io.to(socketId).emit('UPDATE_ENEMY_BOARD', opponent.board);
+    io.to(socketId).emit('UPDATE_LIFE', player.life);
+    io.to(socketId).emit('UPDATE_ENEMY_LIFE', opponent.life);
+    io.to(socketId).emit('UPDATE_MANA', player.mana);
+    io.to(socketId).emit('UPDATE_ENEMY_MANA', opponent.mana);
+    io.to(socketId).emit('UPDATE_ACTIONS', player.actions);
+    io.to(socketId).emit('UPDATE_ENEMY_ACTIONS', opponent.actions);
+    io.to(socketId).emit('UPDATE_MATCH', {matchId: match.id, opponent: opponent.name, isBotMatch: match.botMatch});
 };
 
 const changeActions = (match: Match, side, amount) => {
@@ -196,10 +267,17 @@ const changeLife = (match, side, amount) => {
     io.to(player.socketId).emit('UPDATE_LIFE', life);
     io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('UPDATE_ENEMY_LIFE', life);
     if (life <= 0) {
+        // match over
         io.to(player.socketId).emit('MATCH_OVER', 'DEFEAT');
         io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('MATCH_OVER', 'VICTORY');
-        if (match.botMatch) removeBot(match.player2.socketId);
-        runningMatches.delete(match.matchId);
+        runningMatches.delete(match.id);
+        if (match.botMatch) {
+            removeBot(match.player2.socketId);
+            userC.leaveBotMatch(match.player1.name);
+        } else {
+            userC.leaveMatch(match.player1.name);
+            userC.leaveMatch(match.player2.name);
+        }
     }
 };
 

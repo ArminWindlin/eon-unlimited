@@ -30,7 +30,22 @@ const UserSchema: Schema = new Schema({
     passwordSet: {
         type: Boolean,
         default: false,
-    }
+    },
+    isInMatch: {
+        type: Boolean,
+        default: false,
+    },
+    matchId: {
+        type: Number,
+        default: -1,
+    },
+    activeBotMatch: {
+        type: Boolean,
+        default: false,
+    },
+    botGameState: {
+        type: Object,
+    },
 });
 
 // Export schema for user collection
