@@ -9,3 +9,15 @@
   font-weight: 500;
   font-size: 18px;
 }
+
+@media screen and (max-height: 500px) {
+  .hint {
+    width: 500px;
+    height: 50px;
+    line-height: 50px;
+    position: fixed;
+    bottom: 190px;
+    right: calc(50vw - 250px);
+    text-align: center;
+  }
+}

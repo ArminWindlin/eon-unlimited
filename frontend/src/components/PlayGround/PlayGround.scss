@@ -18,3 +18,20 @@
   }
 
 }
+
+@media screen and (max-height: 500px) {
+  .playground {
+
+    &-name {
+      display: none;
+    }
+
+    &-enemy-name {
+      top: 5px;
+      left: 415px;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+  }
+}

@@ -13,7 +13,8 @@ import EnemyMana from './PlayerVitals/EnemyMana';
 import GameOver from './Displays/GameOver';
 import Chat from './Chat/Chat';
 import {DndProvider} from 'react-dnd';
-import Backend from 'react-dnd-html5-backend';
+import dndBackend from 'react-dnd-html5-backend';
+import dndTouchBackend from 'react-dnd-touch-backend';
 import './PlayGround.scss';
 import InGameMenu from './Displays/InGameMenu';
 
@@ -28,6 +29,7 @@ const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
     const [inGameMenu, setInGameMenu] = useState(false);
     const [opponent, setOpponent] = useState('');
     const [isBotMatch, setIsBotMatch] = useState(false);
+    const isMobile = window.innerHeight < 500;
 
     useEffect(() => {
         window.$socket.emit('GET_MATCH');
@@ -70,7 +72,7 @@ const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
 
     return (
             <div className="playground">
-                <DndProvider backend={Backend}>
+                <DndProvider backend={isMobile ? dndTouchBackend : dndBackend}>
                     <div className="playground-name">{window.$name}</div>
                     <div className="playground-enemy-name">{opponent}</div>
                     <Chat/>
