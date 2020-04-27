@@ -4,6 +4,7 @@ export const units: CardMin[] = [
     {
         id: 'water_c_u_0',
         name: 'Ealu',
+        image: '',
         mana: 3,
         offense: 2,
         defense: 1,

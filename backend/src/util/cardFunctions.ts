@@ -1,4 +1,8 @@
-import Card from '../interfaces/card';
+import Card, {CardMin} from '../interfaces/card';
+import {units as commonCards} from '../cards/neutral/common';
+import {units as rareCards} from '../cards/neutral/rare';
+import {units as epicCards} from '../cards/neutral/epic';
+import {units as legendaryCards} from '../cards/neutral/legendary';
 
 export const getRandomCards = (amount) => {
     let cards = [];
@@ -29,15 +33,8 @@ export const getRandomCard = (index = -1, side = 1) => {
     else if (randomRarity < 0.2) rarity = 'epic';
     else if (randomRarity < 0.4) rarity = 'rare';
     else rarity = 'common';
-    const stats = getRandomStats(rarity);
-    let card: Card = {
-        id: '' + Math.floor(Math.random() * 10000),
-        name: names[Math.floor(Math.random() * names.length)],
-        image: Math.random() < 0.5 ? 'barrel' : 'ancient_monster',
-        mana: stats.mana,
-        offense: stats.offense,
-        defense: stats.defense,
-        health: stats.health,
+    let cardMin: CardMin = getRandomNeutral(rarity);
+    let card: Card = Object.assign({
         type: 'unit',
         rarity: rarity,
         class: 'neutral',
@@ -45,9 +42,24 @@ export const getRandomCard = (index = -1, side = 1) => {
         index: index,
         place: 'hand',
         side: side,
-    };
+    }, cardMin);
     return card;
 };
+
+function getRandomNeutral(rarity) {
+    switch (rarity) {
+        case 'common':
+            return commonCards[Math.floor(Math.random() * commonCards.length)];
+        case 'rare':
+            return rareCards[Math.floor(Math.random() * rareCards.length)];
+        case 'epic':
+            return epicCards[Math.floor(Math.random() * epicCards.length)];
+        case 'legendary':
+            return legendaryCards[Math.floor(Math.random() * legendaryCards.length)];
+        default:
+            throw Error('invalid rarity');
+    }
+}
 
 // Returns random stats according to stat-strength-formula
 // To use separately take file eon-unlimited/utility/statsGenerator.js
