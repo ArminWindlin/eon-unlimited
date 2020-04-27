@@ -9,3 +9,14 @@
   font-weight: 500;
   font-size: 18px;
 }
+
+@media screen and (max-height: 500px) {
+  .hint {
+    width: 400px;
+    height: 20px;
+    line-height: 20px;
+    bottom: 115px;
+    right: auto;
+    left: 5px;
+  }
+}

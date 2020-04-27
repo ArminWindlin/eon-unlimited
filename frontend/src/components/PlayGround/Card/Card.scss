@@ -35,7 +35,7 @@
     position: absolute;
     left: calc(50% - 10px);
     bottom: 10px;
-    background: rgba(0, 0, 255, 0.7);
+    background: rgba(0, 0, 255, 0.6);
   }
 
   &-mana {
@@ -61,4 +61,34 @@
     box-shadow: 0 0 10px 6px #ff8000;
   }
 
+}
+
+@media screen and (max-height: 500px) {
+  .card {
+    width: 80px;
+    height: 80px;
+    margin: 8px;
+
+    &-health {
+      right: 5px;
+      bottom: 5px;
+    }
+
+    &-offense {
+      left: 5px;
+      bottom: 5px;
+    }
+
+    &-defense {
+      left: 5px;
+      top: 30px;
+      bottom: auto;
+    }
+
+    &-mana {
+      right: 5px;
+      top: 30px;
+    }
+
+  }
 }

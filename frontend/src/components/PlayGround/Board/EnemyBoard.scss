@@ -11,3 +11,12 @@
   }
 
 }
+
+@media screen and (max-height: 500px) {
+  .enemy-board-card-container {
+    width: 400px;
+    height: 110px;
+    top: 5px;
+    left: 5px;
+  }
+}

@@ -60,3 +60,29 @@
     top: 0;
   }
 }
+
+@media screen and (max-height: 500px) {
+  .mana {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    right: 10px;
+    font-size: 20px;
+  }
+
+  .life {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    right: 48px;
+    font-size: 20px;
+  }
+
+  .actions {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    right: 120px;
+    font-size: 20px;
+  }
+}

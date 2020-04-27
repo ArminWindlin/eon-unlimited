@@ -14,3 +14,15 @@
   }
 
 }
+
+@media screen and (max-height: 500px) {
+  .deck {
+    width: 40px;
+    height: 110px;
+    line-height: 110px;
+    left: 410px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    text-align: center;
+  }
+}

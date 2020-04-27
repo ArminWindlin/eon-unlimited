@@ -1,5 +1,4 @@
 .hand {
-
   &-card-container {
     width: 600px;
     height: 180px;
@@ -9,5 +8,13 @@
     border: 2px solid rgba(0, 0, 0, 0.5);
     border-radius: 5px;
   }
-
 }
+
+@media screen and (max-height: 500px) {
+  .hand-card-container {
+    width: 400px;
+    height: 110px;
+    left: 5px;
+  }
+}
+
