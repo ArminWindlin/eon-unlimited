@@ -59,15 +59,15 @@ function getRandomStats(rarity) {
             manaAverage = 3;
             break;
         case 'rare':
-            strength = 2.5;
+            strength = 2.25;
             manaAverage = 6;
             break;
         case 'epic':
-            strength = 3;
+            strength = 2.5;
             manaAverage = 10;
             break;
         case 'legendary':
-            strength = 4;
+            strength = 2.75;
             manaAverage = 15;
             break;
         default:
@@ -86,7 +86,7 @@ function getRandomStats(rarity) {
     do {
         def = Math.round(normalDistribution(off * 0.5));
     } while (off + def >= denom || def > off);
-    const health = Math.round((denom - off - def) * 2);
+    const health = Math.round((denom - off - def) * 1.25);
     return {
         mana: mana,
         offense: off,
