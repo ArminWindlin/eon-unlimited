@@ -1,4 +1,4 @@
-getRandomStats('legendary');
+getRandomStats('common');
 
 function getRandomStats(rarity) {
     let manaAverage;
