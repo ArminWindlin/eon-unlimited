@@ -33,6 +33,7 @@ export const getRandomCard = (index = -1, side = 1) => {
     let card: Card = {
         id: '' + Math.floor(Math.random() * 10000),
         name: names[Math.floor(Math.random() * names.length)],
+        image: Math.random() < 0.5 ? 'barrel' : 'ancient_monster',
         mana: stats.mana,
         offense: stats.offense,
         defense: stats.defense,

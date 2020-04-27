@@ -1,6 +1,7 @@
 export default interface Card {
     id: string,
     name: string,
+    image: string,
     // stats
     offense: number,
     defense: number,

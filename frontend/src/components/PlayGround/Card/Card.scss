@@ -1,6 +1,4 @@
 .card {
-  background: url('../../../assets/card_deco/card_deco_sci.png');
-  background-size: cover;
   position: relative;
   width: 120px;
   height: 169px;
@@ -8,6 +6,23 @@
   border-radius: 5px;
   text-align: center;
   color: #30aede;
+  overflow: hidden;
+
+  &-image {
+    background-size: cover;
+    position: absolute;
+    left: 5px;
+    width: 110px;
+    height: 100px;
+  }
+
+  &-deco {
+    background: url('../../../assets/card_deco/card_deco_sci.png');
+    background-size: cover;
+    position: absolute;
+    width: 120px;
+    height: 169px;
+  }
 
   &-title {
     position: absolute;
