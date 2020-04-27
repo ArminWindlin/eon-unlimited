@@ -46,4 +46,13 @@ export const units: CardMin[] = [
         defense: 2,
         health: 2,
     },
+    {
+        id: 'neutral_c_u_5',
+        name: 'Crab',
+        image: 'crab',
+        mana: 3,
+        offense: 2,
+        defense: 2,
+        health: 4,
+    },
 ];
