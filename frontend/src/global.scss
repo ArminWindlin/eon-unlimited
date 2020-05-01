@@ -6,13 +6,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
+  color: white;
 }
 
 .app {
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(0, #FDBB2D 0%, #22C1C3 100%);
+  background: url('./assets/bg.png') #341b66;
+  background-size: cover;
 
   .logo-fixed {
     font-weight: bold;
@@ -65,7 +67,8 @@ body {
 
 /* buttons */
 .button {
-  border: 2px solid rgba(0, 0, 0, 0.5);
+  border: 2px solid #30aedeaa;
+  color: white;
   border-radius: 5px;
   height: 30px;
   line-height: 30px;

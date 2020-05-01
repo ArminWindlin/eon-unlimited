@@ -1,6 +1,7 @@
 export default interface CardType {
     id: string,
     name: string,
+    image: string,
     // stats
     offense: number,
     defense: number,

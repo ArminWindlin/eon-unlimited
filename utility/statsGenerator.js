@@ -1,4 +1,4 @@
-getRandomStats('rare');
+getRandomStats('common');
 
 function getRandomStats(rarity) {
     let manaAverage;
@@ -9,15 +9,15 @@ function getRandomStats(rarity) {
             manaAverage = 3;
             break;
         case 'rare':
-            strength = 2.5;
+            strength = 2.25;
             manaAverage = 6;
             break;
         case 'epic':
-            strength = 3;
+            strength = 2.5;
             manaAverage = 10;
             break;
         case 'legendary':
-            strength = 4;
+            strength = 2.75;
             manaAverage = 15;
             break;
         default:
@@ -26,21 +26,18 @@ function getRandomStats(rarity) {
     let mana;
     do {
         mana = Math.round(normalDistribution(manaAverage));
-        console.log(mana);
     } while (mana >= 20);
     const denom = strength * mana;
     let off;
     do {
         off = Math.round(normalDistribution(denom * 0.4));
-        console.log(off);
     } while (off * 1.5 >= denom);
     let def;
     do {
         def = Math.round(normalDistribution(off * 0.5));
-        console.log(def);
-    } while (off + def >= denom || def > off);
-    const health = Math.round((denom - off - def) * 2);
-    console.log('strength: ' + ((off + def + health * 0.5) / mana));
+    } while (off + def >= denom || def >= off);
+    const health = Math.round(denom - off - def);
+    console.log('strength: ' + ((off + def + health) / mana));
     console.table({
         mana: mana,
         offense: off,

@@ -29,8 +29,8 @@ const Board: React.FC = () => {
 
     const isActive = canDrop && isOver;
     let backgroundColor = 'transparent';
-    if (isActive) backgroundColor = 'rgba(172, 166, 115, 0.9)';
-    else if (canDrop) backgroundColor = 'rgba(172, 166, 115, 0.4)';
+    if (isActive) backgroundColor = '#30aede99';
+    else if (canDrop) backgroundColor = '#30aede33';
 
     return (
             <div className="board">

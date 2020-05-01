@@ -1,6 +1,7 @@
 export default interface Card {
     id: string,
     name: string,
+    image: string,
     // stats
     offense: number,
     defense: number,
@@ -20,6 +21,7 @@ export default interface Card {
 export interface CardMin {
     id: string,
     name: string,
+    image: string,
     // stats
     offense: number,
     defense: number,

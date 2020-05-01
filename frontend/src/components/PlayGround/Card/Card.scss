@@ -1,14 +1,36 @@
 .card {
   position: relative;
-  background: rgba(200, 70, 50, 0.8);
   width: 120px;
-  height: 160px;
+  height: 169px;
   margin: 10px;
   border-radius: 5px;
   text-align: center;
+  color: #30aede;
+  overflow: hidden;
+
+  &-image {
+    background-size: cover;
+    position: absolute;
+    left: 5px;
+    width: 110px;
+    height: 100px;
+  }
+
+  &-deco {
+    background: url('../../../assets/card_deco/card_deco_sci.png');
+    background-size: cover;
+    position: absolute;
+    width: 120px;
+    height: 169px;
+  }
 
   &-title {
-    margin-top: 5px;
+    position: absolute;
+    bottom: 61px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    color: white;
   }
 
   &-stat {
@@ -19,30 +41,26 @@
 
   &-health {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
-    background: rgba(0, 255, 0, 0.5);
+    right: 8px;
+    bottom: 12px;
   }
 
   &-offense {
     position: absolute;
-    left: 10px;
-    bottom: 10px;
-    background: rgba(255, 0, 0, 0.5);
+    right: 63px;
+    bottom: 12px;
   }
 
   &-defense {
     position: absolute;
-    left: calc(50% - 10px);
-    bottom: 10px;
-    background: rgba(0, 0, 255, 0.6);
+    right: 36px;
+    bottom: 12px;
   }
 
   &-mana {
     position: absolute;
-    right: 10px;
-    top: 30px;
-    background: rgba(150, 0, 255, 0.8);
+    left: 5px;
+    top: 11px;
   }
 
   &.selected {
@@ -65,29 +83,42 @@
 
 @media screen and (max-height: 500px) {
   .card {
+    background: rgba(200, 70, 50, 0.8);
     width: 80px;
     height: 80px;
     margin: 8px;
+    color: black;
+
+    &-title {
+      position: relative;
+      margin-top: 5px;
+      bottom: 0;
+    }
 
     &-health {
       right: 5px;
       bottom: 5px;
+      background: rgba(0, 255, 0, 0.5);
     }
 
     &-offense {
       left: 5px;
       bottom: 5px;
+      background: rgba(255, 0, 0, 0.5);
     }
 
     &-defense {
       left: 5px;
       top: 30px;
       bottom: auto;
+      background: rgba(0, 0, 255, 0.6);
     }
 
     &-mana {
+      left: auto;
       right: 5px;
       top: 30px;
+      background: rgba(150, 0, 255, 0.8);
     }
 
   }
