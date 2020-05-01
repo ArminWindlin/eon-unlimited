@@ -34,10 +34,10 @@ function getRandomStats(rarity) {
     } while (off * 1.5 >= denom);
     let def;
     do {
-        def = Math.round(normalDistribution(off * 1.25));
-    } while (off + def >= denom || def > off);
-    const health = Math.round((denom - off - def) * 2);
-    console.log('strength: ' + ((off + def + health * 0.5) / mana));
+        def = Math.round(normalDistribution(off * 0.5));
+    } while (off + def >= denom || def >= off);
+    const health = Math.round(denom - off - def);
+    console.log('strength: ' + ((off + def + health) / mana));
     console.table({
         mana: mana,
         offense: off,

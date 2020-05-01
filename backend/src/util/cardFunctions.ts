@@ -98,8 +98,8 @@ function getRandomStats(rarity) {
     let def;
     do {
         def = Math.round(normalDistribution(off * 0.5));
-    } while (off + def >= denom || def > off);
-    const health = Math.round((denom - off - def) * 1.25);
+    } while (off + def >= denom || def >= off);
+    const health = Math.round(denom - off - def);
     return {
         mana: mana,
         offense: off,
