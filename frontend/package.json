@@ -25,7 +25,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gcloud app deploy app.yaml --stop-previous-version --project eon-unlimited-42"
   },
   "eslintConfig": {
     "extends": "react-app"
