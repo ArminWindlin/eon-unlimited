@@ -1,0 +1,19 @@
+{
+  "name": "eon-unlimited",
+  "version": "1.0.0",
+  "description": "In the project directory, you can run:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArminWindlin/eon-unlimited.git"
+  },
+  "author": "Armin Windlin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArminWindlin/eon-unlimited/issues"
+  },
+  "homepage": "https://github.com/ArminWindlin/eon-unlimited#readme"
+}
