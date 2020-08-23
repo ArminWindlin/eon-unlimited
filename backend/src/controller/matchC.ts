@@ -318,7 +318,7 @@ setInterval(() => {
             changeActions(m, 2, 1);
         }
     });
-}, 1000 * 3);
+}, 1000 * 4);
 
 setInterval(() => {
     runningMatches.forEach(m => {
@@ -327,4 +327,4 @@ setInterval(() => {
             changeMana(m, 2, 1);
         }
     });
-}, 1000 * 5);
+}, 1000 * 4);
