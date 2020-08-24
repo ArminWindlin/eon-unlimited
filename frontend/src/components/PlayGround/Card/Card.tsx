@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './Card.scss';
 import {DragSourceMonitor, useDrag} from 'react-dnd';
 import ItemTypes from '../../../interfaces/ItemTypes';
@@ -7,9 +7,26 @@ import CardType from '../../../interfaces/CardType';
 interface CardProps {
     card: CardType,
     draggable: boolean,
+    onBoard: boolean,
 }
 
-const Card: React.FC<CardProps> = ({card, draggable = true}) => {
+const Card: React.FC<CardProps> = ({card, draggable = true, onBoard}) => {
+
+    useEffect(() => {
+        if (onBoard) {
+            if (card.protectedUntil && card.protectedUntil > Date.now() - 3 * 3000) {
+                setProtectBar(true);
+                setTimeout(() => setProtectBarAnim(true), 100);
+            }
+            if (card.attackAt && card.attackAt > Date.now() && !attackBarLoading) {
+                setAttackBarAnim(false);
+                setAttackBarLoading(true);
+                setAttackBarEmpty(true);
+                setTimeout(() => setAttackBarAnim(true), 100);
+                setTimeout(() => setAttackBarLoading(false), 5000);
+            } else setAttackBar(true);
+        }
+    }, [card]);
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.name, type: ItemTypes.CARD},
@@ -25,6 +42,13 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
         }),
     });
 
+    const [attackBar, setAttackBar] = useState(false);
+    const [attackBarEmpty, setAttackBarEmpty] = useState(false);
+    const [attackBarAnim, setAttackBarAnim] = useState(false);
+    const [attackBarLoading, setAttackBarLoading] = useState(false);
+    const [protectBar, setProtectBar] = useState(false);
+    const [protectBarAnim, setProtectBarAnim] = useState(false);
+
     // enable or disable drag
     const dragRef = draggable ? drag : null;
 
@@ -32,7 +56,7 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
     let opacityStyle: React.CSSProperties = {opacity: opacity};
 
     const selectCard = () => {
-        if(card.place === 'hand') return;
+        if (card.place === 'hand') return;
         window.$socket.emit('SELECT_CARD', {index: card.index, side: card.side});
     };
 
@@ -48,6 +72,12 @@ const Card: React.FC<CardProps> = ({card, draggable = true}) => {
                 <div className="card-stat card-defense">{card.defense}</div>
                 <div className="card-stat card-offense">{card.offense}</div>
                 <div className="card-stat card-mana">{card.mana}</div>
+                <div className={
+                    (attackBar ? 'card-attack-bar' : '') +
+                    (attackBarAnim ? ' fill' : '') +
+                    (attackBarEmpty ? ' empty' : '')}
+                />
+                <div className={(protectBar ? 'card-protect-bar' : '') + (protectBarAnim ? ' no-fill' : '')}/>
             </div>
     );
 };

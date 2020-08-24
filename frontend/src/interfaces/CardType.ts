@@ -15,5 +15,7 @@ export default interface CardType {
     selected: boolean,
     index: number,
     place: string,
-    side: number
+    side: number,
+    protectedUntil?: number,
+    attackAt?: number,
 }

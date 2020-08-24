@@ -20,7 +20,7 @@ const Hand: React.FC = () => {
             <div className="hand">
                 <div className="hand-card-container flex jc-c ai-c">
                     {cards.map((card, i) => {
-                        return <Card card={card} draggable={true} key={i}/>;
+                        return <Card card={card} draggable={true} key={i} onBoard={false}/>;
                     })}
                 </div>
             </div>

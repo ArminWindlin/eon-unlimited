@@ -20,7 +20,7 @@ const EnemyBoard: React.FC = () => {
             <div className="enemy-board">
                 <div className="enemy-board-card-container flex jc-c ai-c">
                     {cards.map((card, i) => {
-                        return <Card card={card} draggable={false} key={i}/>;
+                        return <Card card={card} draggable={false} key={i} onBoard={true}/>;
                     })}
                 </div>
             </div>

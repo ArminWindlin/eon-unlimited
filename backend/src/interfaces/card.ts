@@ -15,7 +15,9 @@ export default interface Card {
     selected: boolean,
     index: number,
     place: string,
-    side: number
+    side: number,
+    protectedUntil?: number,
+    attackAt?: number,
 };
 
 export interface CardMin {

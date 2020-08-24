@@ -136,6 +136,10 @@ export const playCard = (socketId, cardIndex) => {
     // remove mana
     if (!changeMana(match, side, -card.mana)) return;
 
+    // set times
+    card.protectedUntil = Date.now() + 5 * 1000;
+    card.attackAt = Date.now();
+
     // remove card from hand
     hand.splice(cardIndex, 1);
     if (cardIndex !== hand.length) updateIndexes(hand);
@@ -160,21 +164,26 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
     if (cardSide === side) {
         if (board.length < cardIndex + 1) return;
         // deselect previous select
-        if (selectedCard > -1) board[selectedCard].selected = false;
+        if (selectedCard > -1 && board[selectedCard]) board[selectedCard].selected = false;
         // select
         if (!board[cardIndex])
             return io.to(socketId).emit('SHOW_HINT', 'Card is gone');
         board[cardIndex].selected = true;
         player.selectedCard = cardIndex;
     } else {
+        // run attack
         if (selectedCard === -1)
             return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
-        // run attack
+        let card1 = board[selectedCard];
+        if (!card1) return;
+        if (card1.attackAt > Date.now())
+            return io.to(socketId).emit('SHOW_HINT', 'Card is on cooldown');
         if (!changeActions(match, side, -1)) return;
         let opponentBoard = match.getPlayer(getOpponentSide(side)).board;
         if (opponentBoard.length < cardIndex + 1) return;
-        let card1 = board[selectedCard];
         let card2 = opponentBoard[cardIndex];
+        if (card2.protectedUntil > Date.now())
+            return io.to(socketId).emit('SHOW_HINT', 'Card is protected');
         if (!card1 || !card2) return;
         card2.health -= card1.offense;
         card1.health -= card2.defense;
@@ -185,7 +194,10 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
         if (card1.health <= 0) {
             board.splice(selectedCard, 1);
             if (selectedCard !== board.length) updateIndexes(board);
-        } else card1.selected = false;
+        } else {
+            card1.selected = false;
+            card1.attackAt = Date.now() + 5 * 1000;
+        }
         sendBoardUpdate(match, opponentSide);
         player.selectedCard = -1;
     }
@@ -195,15 +207,19 @@ export const selectCard = (socketId, cardIndex, cardSide) => {
 export const attackPlayer = (socketId) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
     if (!match) return;
-    if (!changeActions(match, side, -4)) return;
     const player: Player = match.getPlayer(side);
     let selectedCard = player.selectedCard;
     if (selectedCard === -1)
         return io.to(socketId).emit('SHOW_HINT', 'Select own card first');
     if (!player.board[selectedCard]) return;
+    const card = player.board[selectedCard];
+    if (card.attackAt > Date.now())
+        return io.to(socketId).emit('SHOW_HINT', 'Card is on cooldown');
+    if (!changeActions(match, side, -4)) return;
     changeLife(match, getOpponentSide(side), -player.board[selectedCard].offense);
     player.board[selectedCard].selected = false;
     player.selectedCard = -1;
+    card.attackAt = Date.now() + 5 * 1000;
     sendBoardUpdate(match, side);
 };
 
