@@ -12,6 +12,13 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({card, draggable = true, onBoard}) => {
 
+    const [attackBar, setAttackBar] = useState(false);
+    const [attackBarEmpty, setAttackBarEmpty] = useState(false);
+    const [attackBarAnim, setAttackBarAnim] = useState(false);
+    const [attackBarLoading, setAttackBarLoading] = useState(false);
+    const [protectBar, setProtectBar] = useState(false);
+    const [protectBarAnim, setProtectBarAnim] = useState(false);
+
     useEffect(() => {
         if (onBoard) {
             if (card.protectedUntil && card.protectedUntil > Date.now() - 3 * 3000) {
@@ -26,7 +33,7 @@ const Card: React.FC<CardProps> = ({card, draggable = true, onBoard}) => {
                 setTimeout(() => setAttackBarLoading(false), 5000);
             } else setAttackBar(true);
         }
-    }, [card]);
+    }, [card, onBoard, attackBarLoading]);
 
     const [{isDragging}, drag] = useDrag({
         item: {name: card.name, type: ItemTypes.CARD},
@@ -41,13 +48,6 @@ const Card: React.FC<CardProps> = ({card, draggable = true, onBoard}) => {
             isDragging: monitor.isDragging(),
         }),
     });
-
-    const [attackBar, setAttackBar] = useState(false);
-    const [attackBarEmpty, setAttackBarEmpty] = useState(false);
-    const [attackBarAnim, setAttackBarAnim] = useState(false);
-    const [attackBarLoading, setAttackBarLoading] = useState(false);
-    const [protectBar, setProtectBar] = useState(false);
-    const [protectBarAnim, setProtectBarAnim] = useState(false);
 
     // enable or disable drag
     const dragRef = draggable ? drag : null;
