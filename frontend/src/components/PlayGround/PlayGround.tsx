@@ -8,8 +8,6 @@ import Life from './PlayerVitals/Life';
 import EnemyLife from './PlayerVitals/EnemyLife';
 import Actions from './PlayerVitals/Actions';
 import EnemyActions from './PlayerVitals/EnemyActions';
-import Mana from './PlayerVitals/Mana';
-import EnemyMana from './PlayerVitals/EnemyMana';
 import GameOver from './Displays/GameOver';
 import Chat from './Chat/Chat';
 import {DndProvider} from 'react-dnd';
@@ -85,8 +83,6 @@ const PlayGround: React.FC<IPlayGround> = ({surrender, toMenu}) => {
                     <EnemyLife/>
                     <Actions/>
                     <EnemyActions/>
-                    <Mana/>
-                    <EnemyMana/>
                     {gameOverMessage !== '' && <GameOver message={gameOverMessage}/>}
                     {inGameMenu && <InGameMenu close={() => setInGameMenu(false)}
                                                surrender={endBotMatch}

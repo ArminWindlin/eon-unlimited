@@ -13,8 +13,7 @@ let currentMatchId = 0;
 let playerWaiting = false;
 
 // config
-const MAX_ACTIONS = 10;
-const MAX_MANA = 20;
+const MAX_ACTIONS = 20;
 
 export const startMatch = (socketId) => {
     const name = socketClientMap.get(socketId);
@@ -123,7 +122,6 @@ export const drawCard = (socketId) => {
 export const playCard = (socketId, cardIndex) => {
     const [match, side]: [Match, number] = getMatchAndSide(socketId);
     if (!match) return;
-    if (!changeActions(match, side, -1)) return;
     const player: Player = match.getPlayer(side);
     let hand = player.hand;
     let board = player.board;
@@ -133,8 +131,8 @@ export const playCard = (socketId, cardIndex) => {
     if (board.length > 3)
         return io.to(socketId).emit('SHOW_HINT', 'Board is full');
 
-    // remove mana
-    if (!changeMana(match, side, -card.mana)) return;
+    // remove actions
+    if (!changeActions(match, side, -card.mana)) return;
 
     // set times
     card.protectedUntil = Date.now() + 5 * 1000;
@@ -262,20 +260,6 @@ const changeActions = (match: Match, side, amount) => {
     return true;
 };
 
-const changeMana = (match, side, amount) => {
-    const player = match.getPlayer(side);
-    if (amount < 0 && player.mana + amount < 0) {
-        io.to(player.socketId).emit('SHOW_HINT', 'Not enough mana');
-        return false;
-    }
-    if (amount > 0 && player.mana >= MAX_MANA) return;
-    player.mana += amount;
-    const mana = player.mana;
-    io.to(player.socketId).emit('UPDATE_MANA', mana);
-    io.to(match.getPlayer(getOpponentSide(side)).socketId).emit('UPDATE_ENEMY_MANA', mana);
-    return true;
-};
-
 const changeLife = (match, side, amount) => {
     const player = match.getPlayer(side);
     player.life += amount;
@@ -330,17 +314,8 @@ const sendBoardUpdate = (match, side) => {
 setInterval(() => {
     runningMatches.forEach(m => {
         if (m.started) {
-            changeActions(m, 1, 1);
-            changeActions(m, 2, 1);
-        }
-    });
-}, 1000 * 4);
-
-setInterval(() => {
-    runningMatches.forEach(m => {
-        if (m.started) {
-            changeMana(m, 1, 1);
-            changeMana(m, 2, 1);
+            changeActions(m, 1, 2);
+            changeActions(m, 2, 2);
         }
     });
 }, 1000 * 4);

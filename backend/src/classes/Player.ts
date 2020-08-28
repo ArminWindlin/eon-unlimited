@@ -13,9 +13,9 @@ export default class Player {
     constructor(socketId, name) {
         this.socketId = socketId;
         this.name = name;
-        this.life = 100;
+        this.life = 40;
         this.mana = 20;
-        this.actions = 6;
+        this.actions = 15;
         this.board = [];
         this.hand = [];
         this.selectedCard = -1;
