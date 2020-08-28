@@ -125,8 +125,8 @@ export const playCard = (socketId, cardIndex) => {
     const player: Player = match.getPlayer(side);
     let hand = player.hand;
     let board = player.board;
-    if (hand.length < cardIndex + 1) return;
     let card = hand[cardIndex];
+    if (!card) return;
 
     if (board.length > 3)
         return io.to(socketId).emit('SHOW_HINT', 'Board is full');
@@ -314,8 +314,8 @@ const sendBoardUpdate = (match, side) => {
 setInterval(() => {
     runningMatches.forEach(m => {
         if (m.started) {
-            changeActions(m, 1, 2);
-            changeActions(m, 2, 2);
+            changeActions(m, 1, 1);
+            changeActions(m, 2, 1);
         }
     });
-}, 1000 * 4);
+}, 1000 * 2);

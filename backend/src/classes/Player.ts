@@ -13,7 +13,7 @@ export default class Player {
     constructor(socketId, name) {
         this.socketId = socketId;
         this.name = name;
-        this.life = 40;
+        this.life = 50;
         this.mana = 20;
         this.actions = 15;
         this.board = [];
