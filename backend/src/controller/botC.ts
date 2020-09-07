@@ -23,21 +23,15 @@ setInterval(() => {
             return logError(Error('Match not found'), 'botC', 'setInterval');
         const hand = match.player2.hand;
         const board = match.player2.board;
-        if (hand.length === 0 && board.length === 0)
+        if (hand.length < 3)
             matchC.drawCard(bot.socketId);
         else if (!canAttack(board)) {
             playCard(bot, hand);
         } else {
-            const enemyBoard = match.player1.board;
-            if (!enemyBoard.length) attackPlayer(bot, board);
-            const random = Math.random();
-            if (random < 0.1)
-                matchC.drawCard(bot.socketId);
-            else if (random < 0.2)
-                playCard(bot, hand);
-            else {
-                attackCard(bot, board, enemyBoard);
-            }
+            const enemy = match.player1;
+            const enemyBoard = enemy.board;
+            if (!enemyBoard.length || enemy.life <= 10) attackPlayer(bot, board);
+            attackCard(bot, board, enemyBoard);
         }
     });
 }, 1000 * 3);
