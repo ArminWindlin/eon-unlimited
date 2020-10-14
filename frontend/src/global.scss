@@ -23,6 +23,15 @@ body {
     left: 20px;
     top: 20px;
   }
+
+  .lading-display {
+    font-weight: bold;
+    font-size: 20px;
+    position: fixed;
+    left: 50vw;
+    top: 50vh;
+    transform: translateX(-50%) translateY(-50%);
+  }
 }
 
 /* flex */

@@ -74,6 +74,7 @@ const App: React.FC = () => {
                 {activeComponent === 'matchmaking' && <MatchMaking toMenu={toMenu}/>}
                 {activeComponent === 'play' && <PlayGround surrender={surrenderMatch} toMenu={toMenu}/>}
                 {activeComponent !== 'play' && <div className="logo-fixed">Eon Unlimited</div>}
+                {activeComponent === 'loading' && <div className="lading-display">loading...</div>}
                 <Notification/>
             </div>
     );
