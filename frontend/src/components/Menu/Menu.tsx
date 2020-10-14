@@ -29,11 +29,18 @@ const Menu: React.FC<IMenu> = ({searchMatch, logout, startTestMatch}) => {
         setDisplayPasswordHint(false);
     };
 
+    const openDiscord = () => {
+        window.open('https://discord.gg/S9peHak', '_blank');
+    };
+
     return (
             <div className="menu flex column ai-c jc-c">
                 <div className="button menu-play-button" onClick={searchMatch}>MULTIPLAYER</div>
                 <div className="button menu-play-button" onClick={startTestMatch}>SINGLEPLAYER</div>
                 {settingsOpened && <Settings/>}
+                <div className="button menu-discord-button" onClick={openDiscord}>
+                    Discord
+                </div>
                 <div className="button menu-settings-button" onClick={toggleSettings}>
                     {settingsOpened ? 'Close' : 'Settings'}
                 </div>
