@@ -35,30 +35,34 @@
 
   &-attack-bar {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 45px;
+    left: 12px;
     height: 6px;
-    background: rgba(255, 255, 0, 0.8);
+    width: 96px;
+    border-radius: 5px;
+    background: rgba(0, 200, 0, 0.8);
 
     &.empty {
       width: 0;
+      background: rgba(200, 0, 0, 0.8);
     }
 
     &.fill {
-      width: 100%;
-      transition: width 5s;
+      width: 96px;
+      transition: 5s linear;
+      background: rgba(0, 200, 0, 0.8);
     }
   }
 
   &-protect-bar {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 45px;
+    left: 12px;
+    width: 96px;
     height: 6px;
+    border-radius: 5px;
     background: rgba(100, 0, 255, 0.8);
-    transition: width 5s;
+    transition: width 5s linear;
 
     &.no-fill {
       width: 0;
