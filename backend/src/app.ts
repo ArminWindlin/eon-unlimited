@@ -17,7 +17,7 @@ class App {
 
     // Setup database connection
     private database(): void {
-        mongoose.connect('mongodb+srv://TestUser:test@eoncluster-deeoa.gcp.mongodb.net/test?retryWrites=true&w=majority',
+        mongoose.connect('enter mongodb url',
             {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true});
     }
 
